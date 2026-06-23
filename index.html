@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCP Interview Prep | by Sreeharsha Muttamatam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --red:    #FF3B3B;
+    --orange: #FF7A00;
+    --yellow: #FFD600;
+    --green:  #00C853;
+    --cyan:   #00BCD4;
+    --blue:   #2979FF;
+    --indigo: #5C6BC0;
+    --violet: #9C27B0;
+    --bg:     #0A0A12;
+    --surface:#111120;
+    --card:   #16162A;
+    --text:   #F0F0FF;
+    --muted:  #9090B0;
+    --border: #2A2A44;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── RAINBOW GRADIENT UTILITIES ── */
+  .rainbow-text {
+    background: linear-gradient(90deg, var(--red), var(--orange), var(--yellow), var(--green), var(--cyan), var(--blue), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .rainbow-border {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+  .rainbow-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--red), var(--orange), var(--yellow), var(--green), var(--cyan), var(--blue), var(--violet));
+    z-index: -1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 300px;
+    background: radial-gradient(ellipse, rgba(41,121,255,0.15) 0%, rgba(156,39,176,0.1) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    background: rgba(0,188,212,0.1);
+    border: 1px solid rgba(0,188,212,0.3);
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+  }
+
+  header p.subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 560px;
+    margin: 0 auto 0.5rem;
+    line-height: 1.6;
+  }
+
+  .creator-tag {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .creator-tag span { color: var(--violet); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    margin: 0 auto;
+    max-width: 700px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+  .stat-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── RAINBOW DIVIDER ── */
+  .rainbow-line {
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), var(--orange), var(--yellow), var(--green), var(--cyan), var(--blue), var(--violet));
+    border: none;
+    margin: 0.5rem 0 2rem;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--blue); }
+  .search-box::placeholder { color: var(--muted); }
+
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--blue); color: var(--text); }
+  .filter-btn.active {
+    color: white;
+    border-color: transparent;
+    font-weight: 600;
+  }
+
+  /* ── CATEGORY TABS ── */
+  .category-tabs {
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .cat-tab {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .cat-tab:hover { color: var(--text); }
+  .cat-tab.active { color: white; font-weight: 600; border-color: transparent; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-section {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1.5rem;
+  }
+  .progress-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--violet));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── QUESTION GRID ── */
+  .q-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 1.2rem;
+  }
+
+  @media (max-width: 640px) {
+    .q-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .q-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .q-card-accent {
+    height: 3px;
+  }
+
+  .q-card-body {
+    padding: 1.2rem 1.4rem;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .q-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .q-cat-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .q-diff {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  .diff-basic    { background: rgba(0,200,83,0.15); color: #00C853; }
+  .diff-medium   { background: rgba(255,122,0,0.15); color: #FF7A00; }
+  .diff-advanced { background: rgba(255,59,59,0.15); color: #FF3B3B; }
+
+  .q-question {
+    font-size: 0.93rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* ── ANSWER REVEAL ── */
+  .reveal-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+  .reveal-btn:hover { background: var(--border); color: var(--text); }
+  .reveal-btn .arrow { margin-left: auto; transition: transform 0.3s; font-size: 1rem; }
+  .reveal-btn.open .arrow { transform: rotate(180deg); }
+
+  .answer-box {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #C8C8E8;
+  }
+  .answer-box.visible { display: block; }
+
+  .answer-box code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    background: rgba(41,121,255,0.1);
+    border: 1px solid rgba(41,121,255,0.2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: #7EB8FF;
+  }
+
+  .answer-box .tip {
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(0,200,83,0.08);
+    border-left: 3px solid var(--green);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: #8ADFB0;
+  }
+
+  .answer-box .tip strong { color: var(--green); }
+
+  /* ── MARK AS DONE ── */
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .done-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    flex: 1;
+  }
+  .done-btn:hover { background: rgba(0,200,83,0.1); border-color: var(--green); color: var(--green); }
+  .done-btn.marked { background: rgba(0,200,83,0.15); border-color: var(--green); color: var(--green); }
+
+  .star-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .star-btn:hover { color: var(--yellow); border-color: var(--yellow); }
+  .star-btn.starred { color: var(--yellow); border-color: var(--yellow); background: rgba(255,214,0,0.1); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  footer span { color: var(--violet); }
+
+  /* ── NO RESULTS ── */
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    grid-column: 1/-1;
+    font-size: 0.95rem;
+  }
+
+  /* ── SCROLL TO TOP ── */
+  #scrollTop {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--blue), var(--violet));
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    z-index: 999;
+    transition: transform 0.2s;
+  }
+  #scrollTop:hover { transform: scale(1.1); }
+  #scrollTop.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="badge">☁️ Google Cloud Platform · Interview Mastery</div>
+  <h1 class="rainbow-text">GCP Interview Prep</h1>
+  <p class="subtitle">100+ curated questions with in-depth answers covering every major GCP domain — from core compute to security, MLOps, and beyond.</p>
+  <div class="creator-tag">Crafted by <span>Sreeharsha Muttamatam</span></div>
+</header>
+
+<hr class="rainbow-line">
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-number rainbow-text" id="totalQ">110</div>
+    <div class="stat-label">Questions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number" style="color:var(--green)" id="doneCount">0</div>
+    <div class="stat-label">Completed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number" style="color:var(--yellow)" id="starredCount">0</div>
+    <div class="stat-label">Starred</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number" style="color:var(--violet)" id="topicCount">10</div>
+    <div class="stat-label">Topics</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <div class="progress-label">
+    <span>Your Progress</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search questions...">
+  <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">All</button>
+  <button class="filter-btn" onclick="setFilter('starred')">⭐ Starred</button>
+  <button class="filter-btn" onclick="setFilter('undone')">Pending</button>
+  <button class="filter-btn diff-basic" onclick="setDiff('basic')">Basic</button>
+  <button class="filter-btn diff-medium" onclick="setDiff('medium')">Medium</button>
+  <button class="filter-btn diff-advanced" onclick="setDiff('advanced')">Advanced</button>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="category-tabs" id="catTabs"></div>
+
+<!-- QUESTION GRID -->
+<div class="q-grid" id="qGrid"></div>
+
+<!-- FOOTER -->
+<footer>
+  Built with 🌈 by <span>Sreeharsha Muttamatam</span> · GCP Interview Prep 2025
+</footer>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ═══════════════════════════════════════════════
+//  DATA: 110 GCP INTERVIEW QUESTIONS
+// ═══════════════════════════════════════════════
+const CATEGORIES = [
+  { id: 'core',      label: '⚙️ Core Concepts',      color: '#2979FF' },
+  { id: 'compute',   label: '💻 Compute',             color: '#FF3B3B' },
+  { id: 'storage',   label: '🗄️ Storage & DB',        color: '#FF7A00' },
+  { id: 'network',   label: '🌐 Networking',          color: '#FFD600' },
+  { id: 'bigdata',   label: '📊 Big Data & Analytics', color: '#00C853' },
+  { id: 'ml',        label: '🤖 AI/ML',               color: '#00BCD4' },
+  { id: 'devops',    label: '🔄 DevOps & CI/CD',      color: '#5C6BC0' },
+  { id: 'security',  label: '🔒 Security & IAM',      color: '#9C27B0' },
+  { id: 'cost',      label: '💰 Cost Optimization',   color: '#FF7A00' },
+  { id: 'hybrid',    label: '🔗 Hybrid & Migration',  color: '#00BCD4' },
+];
+
+const QUESTIONS = [
+  // ── CORE CONCEPTS ──────────────────────────────────────────────
+  {
+    id: 1, cat: 'core', diff: 'basic',
+    q: 'What is Google Cloud Platform (GCP) and what are its primary advantages?',
+    a: 'GCP is Google\'s suite of cloud computing services running on the same infrastructure Google uses for its own products (Search, Gmail, YouTube). Primary advantages include: global network infrastructure (the private fiber backbone), sustained use discounts (automatic discounts for running VMs longer), per-second billing, live VM migration for zero-downtime maintenance, strong data analytics and ML capabilities (BigQuery, Vertex AI), and Kubernetes (Google invented it). It\'s highly preferred for data-intensive and ML workloads.',
+    tip: 'Always mention that GCP has the world\'s fastest private network and that Google invented Kubernetes — interviewers love this.'
+  },
+  {
+    id: 2, cat: 'core', diff: 'basic',
+    q: 'Explain the GCP resource hierarchy: Organization → Folder → Project → Resource.',
+    a: 'The GCP hierarchy goes: Organization (root node, tied to a domain via Cloud Identity / Workspace) → Folders (optional grouping, like departments or environments — Dev/Prod) → Projects (the primary unit — every resource belongs to a project, and projects have their own billing, APIs, and IAM) → Resources (GCE instances, GCS buckets, BigQuery tables, etc.). Policies set at a higher level are inherited downward. This hierarchy enables centralized governance at org/folder level while granting autonomy at project level.',
+    tip: 'Draw this hierarchy when explaining it. The key insight: IAM policies are inherited downward and cannot be restricted at a lower level (additive-only).'
+  },
+  {
+    id: 3, cat: 'core', diff: 'basic',
+    q: 'What is a GCP Project and why is it fundamental?',
+    a: 'A GCP Project is the base unit of organization. Every resource must belong to a project. Each project has a unique project ID (immutable, globally unique), a project name (mutable), and a project number (assigned by GCP). Projects isolate billing, APIs, and IAM. You enable/disable APIs per project. Billing accounts are linked at the project level. This makes projects ideal boundaries for environments (dev vs. prod) or microservices.',
+    tip: 'Know the difference: project ID (chosen by you, globally unique, immutable), project name (display name, mutable), project number (Google-assigned, used in certain APIs).'
+  },
+  {
+    id: 4, cat: 'core', diff: 'medium',
+    q: 'What is the difference between a Region and a Zone in GCP?',
+    a: 'A Region is a specific geographical location (e.g., us-central1, europe-west1). Each region contains multiple Zones (e.g., us-central1-a, us-central1-b, us-central1-c), which are isolated data centers within that region. Zones protect against local failures. For high availability, deploy resources across multiple zones in the same region (regional resources like managed instance groups). For disaster recovery, deploy across multiple regions.',
+    tip: 'GCP has 40+ regions and 120+ zones globally. Zonal SLA ≈ 99.9%, Regional (multi-zone) SLA = 99.99%. DR = multi-region.'
+  },
+  {
+    id: 5, cat: 'core', diff: 'medium',
+    q: 'What are the different service models in GCP: IaaS, PaaS, and SaaS?',
+    a: 'IaaS (Infrastructure as a Service): You manage OS, runtime, data. GCP provides hardware. Examples: Compute Engine (VMs), Cloud Storage (raw object store). PaaS (Platform as a Service): GCP manages infrastructure + runtime; you manage app + data. Examples: App Engine, Cloud Run, Cloud Functions. SaaS (Software as a Service): Fully managed software. Examples: BigQuery (analytics SaaS), Firebase, Looker. The trade-off is control vs. operational burden.',
+    tip: 'Remember the responsibility model: IaaS = most control, most work. SaaS = least control, least work.'
+  },
+  {
+    id: 6, cat: 'core', diff: 'advanced',
+    q: 'Explain GCP\'s global vs. regional vs. zonal resource types with examples.',
+    a: 'Global resources: available across all regions/zones — e.g., VPC networks, firewall rules, Cloud Armor policies, IAM policies. Regional resources: available in a specific region — e.g., regional managed instance groups, Cloud SQL instances (regional), subnet. Zonal resources: available in a specific zone — e.g., Compute Engine VM instances, Persistent Disks, zonal node pools in GKE. Understanding this is critical for designing HA architectures. A zonal failure affects only zonal resources; a regional failure (rare) would affect regional resources.',
+    tip: 'VPC is global in GCP — this is different from AWS where VPCs are regional. This is a key GCP differentiator.'
+  },
+
+  // ── COMPUTE ────────────────────────────────────────────────────
+  {
+    id: 7, cat: 'compute', diff: 'basic',
+    q: 'What is Google Compute Engine (GCE) and what are the main machine families?',
+    a: 'GCE provides virtual machines (VMs) on Google\'s infrastructure. Main machine families: General Purpose (N1, N2, N2D, E2 — balanced cost/performance), Compute Optimized (C2, C2D — high CPU for HPC), Memory Optimized (M1, M2, M3 — up to 12 TB RAM for SAP HANA), Accelerator Optimized (A2, A3 — NVIDIA GPUs for ML), Storage Optimized (Z3 — high local SSD throughput). You can also create Custom Machine Types to specify exact vCPU and memory.',
+    tip: 'E2 = cheapest; N2/N2D = best performance per cost; A2/A3 = GPU workloads. Custom machine types are a key GCP differentiator.'
+  },
+  {
+    id: 8, cat: 'compute', diff: 'basic',
+    q: 'What is the difference between Preemptible VMs and Spot VMs in GCP?',
+    a: 'Preemptible VMs: older offering, up to 80% cheaper, Google can reclaim with 30-second warning, run for max 24 hours. Spot VMs: newer and replacement for Preemptible, also up to 91% cheaper, no 24-hour time limit, Google can still reclaim them, but same 30-second warning. Both are ideal for fault-tolerant batch workloads, stateless compute, or checkpoint-able jobs. Not suitable for databases or stateful applications.',
+    tip: 'Spot VMs replaced Preemptible VMs and have no 24-hour limit — this is a common interview trick question.'
+  },
+  {
+    id: 9, cat: 'compute', diff: 'medium',
+    q: 'What is a Managed Instance Group (MIG) and what features does it provide?',
+    a: 'A MIG is a group of identical VM instances managed as a single entity from an instance template. Features: autoscaling (scale based on CPU, HTTP load, Cloud Monitoring metrics, or Pub/Sub queue depth), autohealing (health checks restart unhealthy instances), rolling updates (gradually replace instances with new template), multi-zone or regional deployment (HA), load balancing integration. MIGs can be stateful (preserve persistent disks) or stateless.',
+    tip: 'Key difference: Unmanaged Instance Groups have no autoscaling or autohealing — they\'re just a collection of VMs for load balancing.'
+  },
+  {
+    id: 10, cat: 'compute', diff: 'medium',
+    q: 'What is Google App Engine and when would you choose Standard vs. Flexible?',
+    a: 'App Engine is a fully managed PaaS for web apps. Standard Environment: runs in a Google-managed sandbox, fast startup (milliseconds), can scale to zero, free tier available, limited to specific language runtimes and versions, restricted file system access. Flexible Environment: runs in Docker containers on Compute Engine VMs, slower startup (minutes), minimum 1 instance, supports any language, SSH access, access to local disk, supports background threads. Choose Standard for variable traffic, microservices, cost-sensitive apps. Choose Flexible for apps needing custom runtimes or background processes.',
+    tip: 'Standard scales to zero (great for cost). Flexible uses actual VMs so has no zero-scale. Standard has "cold starts" but they\'re very fast.'
+  },
+  {
+    id: 11, cat: 'compute', diff: 'medium',
+    q: 'What is Cloud Run and how does it differ from Cloud Functions?',
+    a: 'Cloud Run: runs any stateless containerized application, HTTP-triggered or continuously running, scales to zero, per-request billing, supports long-running requests up to 60 min. Cloud Functions: event-driven, single-purpose functions, supports HTTP or background triggers (Pub/Sub, Cloud Storage, Firestore), per-invocation billing, more limited in runtime/memory. Choose Cloud Run when you need containers, longer execution, or more control. Choose Cloud Functions for event-driven lightweight tasks triggered by GCP services.',
+    tip: 'Cloud Run = "serverless containers". Cloud Functions = "serverless functions". Cloud Run is more flexible; Cloud Functions is simpler for event-driven glue code.'
+  },
+  {
+    id: 12, cat: 'compute', diff: 'medium',
+    q: 'What is Google Kubernetes Engine (GKE) and what modes does it offer?',
+    a: 'GKE is a managed Kubernetes service. Google manages the control plane (API server, etcd, scheduler) for free. You manage worker nodes. Modes: Autopilot (fully managed — Google manages node provisioning, scaling, security; you only define pods; per-pod billing) vs. Standard (you manage node pools, machine types, autoscaler config). GKE also supports multi-cluster, Anthos for hybrid, and Workload Identity for pod-level IAM. Node pools can mix machine types and include GPU/Spot nodes.',
+    tip: 'GKE Autopilot is the future — no node management, stronger security defaults, per-pod billing. Google recommends it for most new workloads.'
+  },
+  {
+    id: 13, cat: 'compute', diff: 'advanced',
+    q: 'Explain Sustained Use Discounts (SUD) and Committed Use Discounts (CUD) in GCP.',
+    a: 'Sustained Use Discounts (SUD): automatic discounts applied when you use a GCE VM or Cloud SQL instance for more than 25% of a month. Discount increases up to 30% for sustained full-month usage — no sign-up required. CUD (Committed Use Discounts): you commit to using a certain resource configuration for 1 or 3 years; discounts up to 57% for compute, up to 70% for GPU/memory-optimized. Resource-based CUDs (specific machine type) vs. Spend-based CUDs (commit to dollar spend, more flexible). CUDs are applied project-wide via the billing account.',
+    tip: 'SUD = automatic, no commitment. CUD = manual commitment, deeper discount. Both cannot be combined — CUD supersedes SUD on committed resources.'
+  },
+  {
+    id: 14, cat: 'compute', diff: 'advanced',
+    q: 'How does GCP Live Migration work and why is it significant?',
+    a: 'GCP Live Migration allows running VMs to be moved to different physical hosts (e.g., for hardware maintenance, security patches) without any downtime or user action. GCP copies the VM\'s memory to the target host while it\'s still running, switches traffic over with a brief pause (milliseconds), then terminates the old host. This is a major differentiator — AWS and Azure sometimes require scheduled reboots for maintenance. Live migration means your VMs can get critical security patches without disrupting your services.',
+    tip: 'Live migration is unique to GCP and is a major talking point. GPUs and some specialized instances do not support live migration.'
+  },
+
+  // ── STORAGE & DATABASES ────────────────────────────────────────
+  {
+    id: 15, cat: 'storage', diff: 'basic',
+    q: 'What is Google Cloud Storage (GCS) and what are its storage classes?',
+    a: 'GCS is a globally unified object storage service. Storage Classes: Standard (frequently accessed data, no minimum storage duration), Nearline (accessed < once/month, 30-day min retention), Coldline (accessed < once/quarter, 90-day min retention), Archive (accessed < once/year, 365-day min retention, lowest cost). All classes use the same APIs, have same millisecond access latency, and support lifecycle management to auto-transition objects between classes based on age or access patterns.',
+    tip: 'Key GCS differentiator: unlike AWS S3 Glacier, even Archive class is accessible in milliseconds — just costs more per retrieval.'
+  },
+  {
+    id: 16, cat: 'storage', diff: 'basic',
+    q: 'What is the difference between Cloud SQL, Cloud Spanner, and Cloud Bigtable?',
+    a: 'Cloud SQL: managed RDBMS (MySQL, PostgreSQL, SQL Server), best for transactional workloads up to a few TB, regional HA, familiar SQL. Cloud Spanner: globally distributed, horizontally scalable relational database with strong consistency, 99.999% SLA, best for global transactional applications needing massive scale (multi-region). Cloud Bigtable: fully managed NoSQL wide-column store (based on Google\'s original Bigtable paper), ideal for very high throughput analytical or IoT/time-series workloads at petabyte scale, HBase-compatible.',
+    tip: 'Rule of thumb: Cloud SQL = MySQL/Postgres in cloud. Spanner = global SQL at infinite scale. Bigtable = HBase-compatible NoSQL for high-throughput analytics.'
+  },
+  {
+    id: 17, cat: 'storage', diff: 'medium',
+    q: 'When would you use Firestore vs. Datastore in GCP?',
+    a: 'Cloud Firestore is the next generation of Cloud Datastore — Datastore is now a legacy mode of Firestore. Firestore (Native Mode): recommended for new projects, real-time listeners, collection-document model, strong consistency, better mobile/web SDK support. Firestore (Datastore Mode): backward-compatible with old Datastore APIs, no real-time updates, entity-kind model. Use native Firestore for new applications, especially mobile apps. Firestore auto-scales horizontally and is multi-region capable.',
+    tip: 'Datastore mode = old API compatibility. Native mode = new features. You can\'t switch between modes after creation — choose carefully.'
+  },
+  {
+    id: 18, cat: 'storage', diff: 'medium',
+    q: 'What is Cloud Memorystore and what engines does it support?',
+    a: 'Cloud Memorystore is a fully managed in-memory data store service. It supports Redis and Memcached. Use cases: caching (reduce database load), session management, real-time leaderboards, pub/sub messaging. Redis tier: supports persistence, Lua scripting, Redis Cluster mode (Memorystore for Redis Cluster), HA with automatic failover, up to 300 GB per instance. Memcached tier: multi-threaded, simple key-value caching, no persistence. Memorystore is peered into your VPC for low latency.',
+    tip: 'Choose Redis if you need persistence, data structures (lists, sets, hashes), pub/sub, or TTL. Choose Memcached for simple, multi-threaded, high-throughput caching.'
+  },
+  {
+    id: 19, cat: 'storage', diff: 'medium',
+    q: 'How does Cloud Storage Object Lifecycle Management work?',
+    a: 'GCS Lifecycle Management lets you define rules to automatically transition objects between storage classes or delete them based on conditions. Conditions include: age (days since creation), created-before (date), number of newer versions, storage class, matches-storage-class, is-live (for versioned buckets). Actions: SetStorageClass (e.g., Standard → Nearline after 30 days), Delete. Rules are applied daily by GCS. Example: transition to Coldline after 90 days, delete after 365 days.',
+    tip: 'Lifecycle rules are a common cost optimization technique. Combine with Object Versioning for delete protection + cost control.'
+  },
+  {
+    id: 20, cat: 'storage', diff: 'advanced',
+    q: 'Explain Cloud Spanner\'s TrueTime API and why it\'s critical for global consistency.',
+    a: 'TrueTime is Google\'s globally synchronized clock service used internally by Spanner. Unlike NTP which has milliseconds of uncertainty, TrueTime exposes the uncertainty interval explicitly (typically a few milliseconds). Spanner uses TrueTime to assign globally consistent timestamps to transactions. Before committing, Spanner waits until the TrueTime uncertainty window has passed, ensuring that the commit timestamp is provably in the past for all nodes globally. This enables external consistency (linearizability) without sacrificing distributed performance — Spanner knows the causal ordering of all global transactions.',
+    tip: 'TrueTime uses GPS receivers and atomic clocks in every data center. This is Spanner\'s secret weapon and is impossible to replicate outside Google\'s infrastructure.'
+  },
+  {
+    id: 21, cat: 'storage', diff: 'advanced',
+    q: 'What is a GCS Bucket\'s uniform vs. fine-grained access control?',
+    a: 'Uniform bucket-level access (recommended): disables ACLs entirely, all access controlled via Cloud IAM only. Enables features like VPC Service Controls and simplifies audit trails. Fine-grained access: allows both Cloud IAM and per-object ACLs. Required for public object sharing at object level, but harder to audit and manage. Best practice: use uniform access. If you need individual file sharing, use signed URLs or IAM Conditions instead of object ACLs.',
+    tip: 'Uniform access is recommended and required for VPC Service Controls. You can switch from fine-grained to uniform, but not back.'
+  },
+
+  // ── NETWORKING ─────────────────────────────────────────────────
+  {
+    id: 22, cat: 'network', diff: 'basic',
+    q: 'What is a Virtual Private Cloud (VPC) in GCP and how does it differ from AWS?',
+    a: 'A GCP VPC is a global virtual network that spans all GCP regions (unlike AWS where VPCs are region-scoped). A single VPC can have subnets in any region. Key features: subnets are regional (not zonal), auto-mode or custom-mode, VM traffic always traverses Google\'s private fiber network (never the public internet between GCP regions), support for VPC peering, Shared VPC, Private Google Access. This global nature simplifies multi-region architectures significantly compared to AWS.',
+    tip: 'GCP VPC = GLOBAL. AWS VPC = regional. This is the #1 GCP networking differentiator. A single VPC can have subnets in us-central1, europe-west1, and asia-east1.'
+  },
+  {
+    id: 23, cat: 'network', diff: 'basic',
+    q: 'What is Cloud Load Balancing in GCP and what are the different types?',
+    a: 'GCP Cloud Load Balancing distributes traffic across backends. Types: Global External HTTP(S) Load Balancer (Layer 7, global anycast, supports Cloud CDN, SSL offload, URL-based routing), Global External TCP/SSL Proxy Load Balancer (Layer 4, for TCP/SSL traffic), Regional External Network Load Balancer (Layer 4, regional, pass-through, for UDP/TCP), Internal HTTP(S) Load Balancer (Layer 7, internal only, for internal services), Internal TCP/UDP Load Balancer (Layer 4, internal). The global LBs use a single anycast IP address — traffic routes to the nearest healthy backend globally.',
+    tip: 'GCP\'s global HTTP(S) LB uses a single anycast IP — one IP routes to backends in any region. This means inherent anycast-based global failover.'
+  },
+  {
+    id: 24, cat: 'network', diff: 'medium',
+    q: 'What is Cloud CDN and how does it work with the load balancer?',
+    a: 'Cloud CDN uses Google\'s global edge network to cache content close to users (100+ cache nodes). It integrates with the Global External HTTP(S) Load Balancer as a checkbox. CDN caches responses based on Cache-Control headers (or configurable cache modes: USE_ORIGIN_HEADERS, CACHE_ALL_STATIC, FORCE_CACHE_ALL). Cache keys can be customized (include/exclude query params, headers, cookies). Supports signed URLs/cookies for private content. Cache invalidation is instant. Works with backends like GCS buckets, GCE MIGs, NEGs.',
+    tip: 'Cloud CDN is only available with the global external HTTPS load balancer. Enable with one checkbox — very low operational overhead.'
+  },
+  {
+    id: 25, cat: 'network', diff: 'medium',
+    q: 'What is Shared VPC and VPC Peering? When would you use each?',
+    a: 'Shared VPC: allows a host project to share its VPC subnets with service projects within the same organization. Service project VMs get IPs from the host VPC. Centralized network administration. Best for multi-project environments needing centralized network control (e.g., enterprise with many teams). VPC Peering: connects two VPCs (same or different org/project) so resources can communicate using internal IPs. Peering is non-transitive (A↔B, B↔C does NOT mean A↔C). Best for connecting separate projects/orgs. Key difference: Shared VPC = single VPC shared across projects. VPC Peering = two separate VPCs connected.',
+    tip: 'Shared VPC is preferred in enterprise settings for centralized governance. VPC Peering is for connecting separate environments or partners.'
+  },
+  {
+    id: 26, cat: 'network', diff: 'medium',
+    q: 'What is Cloud Interconnect and how does it differ from Cloud VPN?',
+    a: 'Cloud VPN: encrypted IPsec tunnel over the public internet, typically up to 3 Gbps per tunnel, supports multiple tunnels, suitable for moderate-bandwidth needs. Cloud Interconnect: dedicated private physical connection to Google\'s network, not over public internet. Types: Dedicated Interconnect (10 Gbps or 100 Gbps circuits, direct physical connection) and Partner Interconnect (50 Mbps to 50 Gbps via a service provider). Choose Cloud VPN for simple/low-cost hybrid connectivity. Choose Cloud Interconnect for high-bandwidth, low-latency, consistent connectivity (e.g., data migration, latency-sensitive enterprise apps).',
+    tip: 'Cloud Interconnect traffic doesn\'t traverse the public internet. Cloud VPN does (but encrypted). Interconnect = SLA-backed, lower latency, higher cost.'
+  },
+  {
+    id: 27, cat: 'network', diff: 'advanced',
+    q: 'What is Private Google Access and why is it important for private VMs?',
+    a: 'Private Google Access allows VM instances that only have internal IPs (no external IPs) to access Google APIs and services (GCS, BigQuery, Pub/Sub, etc.) without needing to route through the internet. You enable it at the subnet level. Without it, a VM with no external IP cannot reach GCS. This is critical for security: your compute fleet can be fully internal while still accessing GCP services. For on-prem access to Google APIs via Interconnect/VPN, you use Private Service Connect or Private Google Access for on-premises.',
+    tip: 'Best practice: disable external IPs on all VMs, enable Private Google Access on all subnets. Use Cloud NAT only for VMs that need outbound internet access.'
+  },
+  {
+    id: 28, cat: 'network', diff: 'advanced',
+    q: 'What is Cloud Armor and what threats does it protect against?',
+    a: 'Cloud Armor is GCP\'s DDoS protection and WAF (Web Application Firewall) service, integrated with the Global External HTTP(S) Load Balancer and Cloud CDN. Features: pre-configured WAF rules (OWASP Top 10 — SQLi, XSS, etc.), custom security policies (IP allowlist/denylist, geo-based rules, rate limiting), Adaptive Protection (ML-based DDoS detection and alerting), preconfigured rules for known vulnerabilities. Cloud Armor absorbs volumetric DDoS attacks at Google\'s global network edge before they reach your load balancer.',
+    tip: 'Cloud Armor operates at Google\'s network edge — DDoS traffic is absorbed globally, not just at your region. This is a massive advantage over application-layer mitigation.'
+  },
+
+  // ── BIG DATA & ANALYTICS ───────────────────────────────────────
+  {
+    id: 29, cat: 'bigdata', diff: 'basic',
+    q: 'What is BigQuery and what makes it unique compared to traditional data warehouses?',
+    a: 'BigQuery is a fully managed, serverless, petabyte-scale data warehouse. Key differentiators: separation of storage and compute (scale independently), serverless (no cluster to manage), columnar storage (Dremel), query using standard SQL, automatic storage and caching, built-in ML (BigQuery ML — train models with SQL), real-time analytics via streaming inserts, native support for GIS/geospatial, federated queries (query Cloud Storage, Drive, Bigtable without importing), BI Engine for in-memory analysis. Pricing: per-query (on-demand) or flat-rate slots.',
+    tip: 'BigQuery runs on Dremel (distributed query execution) + Colossus (distributed storage) — different systems. This is why it scales independently.'
+  },
+  {
+    id: 30, cat: 'bigdata', diff: 'basic',
+    q: 'What is Cloud Pub/Sub and what are common use cases?',
+    a: 'Cloud Pub/Sub is a fully managed, globally scalable message queuing and streaming service. Publishers send messages to topics; subscribers receive them via subscriptions (push or pull). Key features: at-least-once delivery, ordering within a region (with ordering keys), message retention up to 31 days, Exactly-Once delivery option, dead-letter topics. Common use cases: event-driven architectures, stream ingestion for Dataflow, decoupling microservices, IoT telemetry ingestion, log processing, fanout patterns. Pub/Sub scales to millions of messages/second globally.',
+    tip: 'Pub/Sub is the glue of GCP event-driven architectures. Pub/Sub → Dataflow → BigQuery is the canonical real-time analytics pipeline on GCP.'
+  },
+  {
+    id: 31, cat: 'bigdata', diff: 'medium',
+    q: 'What is Dataflow and how does it relate to Apache Beam?',
+    a: 'Cloud Dataflow is a fully managed stream and batch data processing service based on Apache Beam. Apache Beam is a unified programming model (SDK in Java, Python, Go) that can run on multiple runners (Dataflow, Flink, Spark). You write a Beam pipeline once and run it on Dataflow for auto-scaling, serverless execution. Dataflow auto-scales workers, handles fault tolerance, and optimizes the execution graph. Common patterns: ETL pipelines, real-time analytics, ML feature engineering. Dataflow recently supports Flex Templates and SQL.',
+    tip: 'Apache Beam = code abstraction. Dataflow = execution engine. Write once, run serverlessly on Dataflow.'
+  },
+  {
+    id: 32, cat: 'bigdata', diff: 'medium',
+    q: 'What is Dataproc and when would you use it over Dataflow?',
+    a: 'Dataproc is a managed Hadoop/Spark/Flink service. It provisions clusters in ~90 seconds. Use Dataproc when: migrating existing Hadoop/Spark jobs with minimal refactoring, needing Spark MLlib or existing Spark ecosystem tools, running HBase on Google Cloud (Bigtable is often preferred), using Presto/Trino on GCP. Use Dataflow (Beam) when: building new pipelines, wanting fully serverless execution (no cluster management), combining batch and streaming in one pipeline (unified model). Dataproc also supports Serverless Spark for on-demand Spark without managing clusters.',
+    tip: 'Dataproc = managed Hadoop ecosystem, you still manage clusters. Dataflow = fully serverless, no infrastructure. Choose Dataproc for lift-and-shift Spark jobs.'
+  },
+  {
+    id: 33, cat: 'bigdata', diff: 'medium',
+    q: 'What are BigQuery slots and how does pricing work?',
+    a: 'A BigQuery slot is a unit of computational capacity for executing queries (comprising CPU, memory, network). On-demand pricing: ~$5 per TB scanned (first 1 TB/month free), slots allocated dynamically. Flat-rate pricing: commit to a fixed number of slots (100 slots minimum), pay monthly regardless of queries run, better for predictable workloads. BigQuery Editions (new): Standard, Enterprise, Enterprise Plus — offers flex slots (1-minute commitments), annual/3-year commitments with discounts. Reservations allow allocating slots to specific projects or teams.',
+    tip: 'Use on-demand for unpredictable workloads. Flat-rate/Editions if your monthly query spend exceeds ~$1,700 (equivalent of 100 slots at published pricing).'
+  },
+  {
+    id: 34, cat: 'bigdata', diff: 'advanced',
+    q: 'What is Dataplex and how does it help with data mesh architectures?',
+    a: 'Dataplex is GCP\'s intelligent data fabric for managing, monitoring, and governing distributed data across data lakes, warehouses, and marts. For data mesh: Dataplex defines Lakes (logical data domains), Zones (within lakes — raw vs. curated), and Assets (GCS buckets or BigQuery datasets attached to zones). It automatically discovers schemas, profiles data quality, enforces data governance policies (via IAM and catalog), runs automated data quality checks, and provides a unified metadata layer. Integrates with Data Catalog for discovery, BigQuery, Cloud Storage.',
+    tip: 'Dataplex = central governance layer over distributed data. It supports data mesh by enabling decentralized data ownership with centralized governance.'
+  },
+  {
+    id: 35, cat: 'bigdata', diff: 'advanced',
+    q: 'How do you optimize BigQuery query performance and costs?',
+    a: 'Performance: use columnar storage (only SELECT needed columns, avoid SELECT *), partition tables by date/ingestion time and cluster by frequently filtered columns, use appropriate table expiration, leverage BI Engine for repeated dashboard queries, use materialized views for pre-computed aggregations. Cost: preview queries to estimate scanned bytes, use partition pruning (always filter on partition column), use clustered tables to reduce scanned data, cache query results (free for 24 hours), use BigQuery table snapshots. Monitor with INFORMATION_SCHEMA views for slot usage and job history.',
+    tip: 'Golden rule: Partition → Cluster → Materialize. Partition for time-based queries, cluster for secondary filters. Never SELECT * in production BigQuery.'
+  },
+
+  // ── AI / ML ────────────────────────────────────────────────────
+  {
+    id: 36, cat: 'ml', diff: 'basic',
+    q: 'What is Vertex AI and how does it unify GCP\'s ML offerings?',
+    a: 'Vertex AI is GCP\'s unified managed ML platform, consolidating AutoML and AI Platform (previously separate). It provides: Vertex AI Workbench (managed notebooks), Datasets (managed dataset for training), Training (custom training with built-in algorithms or custom containers), AutoML (no-code model training for tabular, image, text, video), Model Registry, Endpoints (serving models), Pipelines (MLOps workflows with Kubeflow/TFX), Feature Store, Vector Search (ANN search for embeddings), Model Monitoring (detect drift), Experiments (tracking).',
+    tip: 'Vertex AI = one-stop shop for ML on GCP. Previously you had to stitch together AI Platform, AutoML, and other services — Vertex unifies all of it.'
+  },
+  {
+    id: 37, cat: 'ml', diff: 'basic',
+    q: 'What is BigQuery ML (BQML) and what types of models can you train?',
+    a: 'BigQuery ML allows data analysts to create and execute ML models using SQL directly in BigQuery — no Python/frameworks needed. Model types: linear regression, logistic regression, k-means clustering, matrix factorization, time series forecasting (ARIMA+), XGBoost, deep neural networks (DNN), AutoML Tables (automated feature engineering), TensorFlow model import/export, and using remote models via Vertex AI. Workflow: CREATE OR REPLACE MODEL → ML.EVALUATE → ML.PREDICT — all in SQL.',
+    tip: 'BQML is perfect for analysts who know SQL but not TensorFlow. Democratizes ML without needing a data science team. Very common in enterprise analytics interviews.'
+  },
+  {
+    id: 38, cat: 'ml', diff: 'medium',
+    q: 'What is the Vertex AI Feature Store?',
+    a: 'Vertex AI Feature Store is a managed repository for ML features. It solves: feature reuse (define once, use across models), training-serving skew (same features used in training and serving), point-in-time lookups (get feature values as they were at a specific time — critical for time-series models). Components: Feature Groups (GCS or BigQuery source), Features, Feature View (materialized view served online for low-latency lookups). Online serving: sub-10ms latency. Batch serving: read historical values for training datasets.',
+    tip: 'Training-serving skew is a major production ML issue — Feature Store solves it by using the same feature logic for training and inference.'
+  },
+  {
+    id: 39, cat: 'ml', diff: 'medium',
+    q: 'What is Vertex AI Pipelines and how does it support MLOps?',
+    a: 'Vertex AI Pipelines provides a managed execution environment for ML workflow pipelines, based on Kubeflow Pipelines (KFP) SDK or TFX. It supports: artifact tracking (inputs/outputs tracked across steps), caching (skip rerunning unchanged steps), parallelism, parameterization, integration with Vertex AI services. MLOps workflows: data validation → feature engineering → training → evaluation → deployment → monitoring. Pipelines enable CI/CD for ML — triggering retraining on new data or model drift. Pipelines are version-controlled as YAML/JSON.',
+    tip: 'Vertex Pipelines = "GitOps for ML". Each pipeline run is versioned, cached, and auditable. Essential for production ML at scale.'
+  },
+  {
+    id: 40, cat: 'ml', diff: 'advanced',
+    q: 'What is Model Monitoring in Vertex AI and how do you detect training-serving skew and drift?',
+    a: 'Vertex AI Model Monitoring continuously analyzes prediction requests to deployed models. It detects: Training-Serving Skew (statistical difference between training data distribution and live prediction input distribution), Prediction Drift (change in feature distribution over time). Methods: Jensen-Shannon divergence (categorical) and Wasserstein distance (numerical). When drift exceeds a threshold, alerts are sent via Cloud Monitoring. Root cause analysis: compare feature distributions in monitoring logs vs. training baseline. Monitoring is enabled per endpoint, sampling input features.',
+    tip: 'Drift ≠ Skew: Drift = production inputs changing over time. Skew = production inputs look different from training data from day 1. Both cause model degradation.'
+  },
+
+  // ── DevOps & CI/CD ─────────────────────────────────────────────
+  {
+    id: 41, cat: 'devops', diff: 'basic',
+    q: 'What is Cloud Build and how is it used for CI/CD?',
+    a: 'Cloud Build is GCP\'s fully managed CI/CD platform. You define build steps in a cloudbuild.yaml file (or JSON). Each step is a Docker container that runs commands. Steps run sequentially by default (or in parallel with waitFor). Cloud Build integrates with: Cloud Source Repositories, GitHub, Bitbucket (triggers on push/PR), Artifact Registry (store built images), Cloud Deploy (CD), Secret Manager (secure secrets), and GKE/Cloud Run (deployment targets). Pricing: 120 free build minutes/day, then per minute per machine type.',
+    tip: 'cloudbuild.yaml steps are Docker containers — you can use any public or custom container as a build step. This is very flexible.'
+  },
+  {
+    id: 42, cat: 'devops', diff: 'basic',
+    q: 'What is Artifact Registry and how does it differ from Container Registry?',
+    a: 'Artifact Registry is the next-generation managed repository for container images and non-container artifacts (npm, Maven, PyPI, Helm charts, Python packages). Container Registry (gcr.io) is the older, legacy service for Docker images only. Artifact Registry supports: fine-grained IAM per repository, multiple formats in one service, regional or multi-regional repositories, CMEK, vulnerability scanning via Container Analysis, integration with Cloud Build and GKE. Container Registry is deprecated — migrate to Artifact Registry.',
+    tip: 'Always say Artifact Registry in interviews, not Container Registry (deprecated). AR supports Docker, npm, Maven, Python, Helm — all in one place.'
+  },
+  {
+    id: 43, cat: 'devops', diff: 'medium',
+    q: 'What is Cloud Deploy and how does it implement progressive delivery?',
+    a: 'Cloud Deploy is a managed continuous delivery service for GKE, Cloud Run, and Anthos. It defines a delivery pipeline with a sequence of targets (dev → staging → prod). Deployments progress through targets with manual approvals between stages. Supports: canary deployments (route % of traffic to new version), blue/green deployments, rollbacks (one-click), integration with Cloud Build, audit trail for compliance. Each release is immutable — same container image promoted through all stages. Integrates with Skaffold for render/deploy configuration.',
+    tip: 'Cloud Deploy = GitOps for GCP. You promote the SAME artifact across environments. This is the key principle — no rebuilds between stages.'
+  },
+  {
+    id: 44, cat: 'devops', diff: 'medium',
+    q: 'What is Terraform and how is it used with GCP? What GCP alternatives exist?',
+    a: 'Terraform (HashiCorp) is the most popular IaC tool for GCP. You write HCL (HashiCorp Configuration Language) to define GCP resources, run terraform plan (preview) and terraform apply (deploy). State file tracks resource state (store in GCS bucket). GCP native alternatives: Cloud Deployment Manager (YAML/Python/Jinja-based, only for GCP resources, older, less popular), Config Connector (Kubernetes CRDs to manage GCP resources from GKE), Pulumi (infrastructure as code using TypeScript/Python). Best practice: Terraform + remote state in GCS + Workload Identity for auth.',
+    tip: 'Terraform is the industry standard for GCP IaC. Know the init/plan/apply/destroy lifecycle and remote backend configuration (GCS for state).'
+  },
+  {
+    id: 45, cat: 'devops', diff: 'medium',
+    q: 'What is Anthos and what problems does it solve?',
+    a: 'Anthos is GCP\'s hybrid and multi-cloud application management platform. It provides a single control plane for managing Kubernetes clusters running on GCP (GKE), on-premises (GKE on-premises via VMware or bare metal), AWS, and Azure. Key components: Anthos Config Management (GitOps-based config sync across clusters), Anthos Service Mesh (Istio-based service mesh for observability and mTLS), Anthos Security, Fleet Management (unified cluster management). Solves: consistent policy enforcement, service mesh across hybrid environments, centralized observability.',
+    tip: 'Anthos = "GKE everywhere". It brings Google\'s managed Kubernetes and service mesh to any environment — on-prem, other clouds, and GCP.'
+  },
+  {
+    id: 46, cat: 'devops', diff: 'advanced',
+    q: 'What is Config Connector and how does it support GitOps on GCP?',
+    a: 'Config Connector is a Kubernetes add-on that represents GCP resources as Kubernetes Custom Resource Definitions (CRDs). You define GCP resources (Cloud SQL, Pub/Sub, GCS buckets, etc.) as Kubernetes YAML and manage them via kubectl. Config Connector uses Workload Identity to authenticate. In a GitOps workflow: store GCP resource YAML in Git → Argo CD or Config Sync deploys to GKE → Config Connector reconciles the desired GCP resource state. This unifies infrastructure and application management in a single Kubernetes/GitOps workflow.',
+    tip: 'Config Connector lets you manage GCP resources the same way you manage Kubernetes workloads — same GitOps tooling (Argo CD, Flux) for both.'
+  },
+
+  // ── SECURITY & IAM ─────────────────────────────────────────────
+  {
+    id: 47, cat: 'security', diff: 'basic',
+    q: 'What is Cloud IAM and how does it work (members, roles, permissions)?',
+    a: 'Cloud IAM is GCP\'s identity and access management system. Policy structure: Members (who) → Roles (collection of permissions) → Permissions (what they can do on a resource). Members: Google Accounts, Service Accounts, Google Groups, Cloud Identity domains, allUsers (public), allAuthenticatedUsers. Role types: Primitive (Owner, Editor, Viewer — legacy, too broad), Predefined (fine-grained, managed by Google per service, e.g., roles/storage.objectViewer), Custom (user-defined, specific permissions). IAM policies are attached to resources and inherited through the hierarchy.',
+    tip: 'Never use Owner/Editor in production — too broad. Always use Predefined roles or Custom roles with least privilege.'
+  },
+  {
+    id: 48, cat: 'security', diff: 'basic',
+    q: 'What is a Service Account in GCP and when would you use one?',
+    a: 'A Service Account is an identity for an application or compute resource (not a human) to authenticate as and call GCP APIs. Use cases: GCE VM needs to access Cloud Storage (attach SA to VM), Cloud Run service calling BigQuery, Cloud Function writing to Pub/Sub. Service accounts have email-like identifiers (e.g., name@project.iam.gserviceaccount.com). You grant IAM roles to service accounts on resources. Key types: user-created SA (custom), Compute Engine default SA (auto-created, grant minimal roles), Google-managed SA (used by GCP services internally).',
+    tip: 'Best practice: Create per-workload service accounts with minimal permissions. Avoid using the default Compute Engine service account (has Editor role by default!).'
+  },
+  {
+    id: 49, cat: 'security', diff: 'medium',
+    q: 'What is Workload Identity and why is it preferred over service account keys?',
+    a: 'Workload Identity allows GKE pods to impersonate a GCP service account without downloading and managing service account JSON keys. How it works: link a Kubernetes Service Account to a GCP Service Account via annotation and IAM binding. The pod automatically gets short-lived tokens via the metadata server. Why preferred over keys: keys are long-lived credentials that can be leaked, rotated manually, and misused. Workload Identity tokens are short-lived, auto-rotated, and scoped to specific pods. Also available as Workload Identity Federation for non-GCP workloads (GitHub Actions, AWS, Azure, on-prem).',
+    tip: 'Never download service account keys in production. Use Workload Identity on GKE, and attach service accounts to GCE VMs via instance metadata instead.'
+  },
+  {
+    id: 50, cat: 'security', diff: 'medium',
+    q: 'What is VPC Service Controls and what problem does it solve?',
+    a: 'VPC Service Controls creates a security perimeter around GCP services (BigQuery, Cloud Storage, etc.) to prevent data exfiltration. Even if a user has IAM permissions to access a GCS bucket or BigQuery dataset, if they\'re outside the service perimeter, access is denied. Example: a malicious insider could grant themselves access to a GCS bucket and then access it from outside GCP (e.g., personal laptop). VPC Service Controls blocks this by requiring requests to originate from within the perimeter (specific VPCs, IP ranges, or trusted identities).',
+    tip: 'VPC Service Controls is about data exfiltration prevention, not just access control. IAM controls WHO can access; VPC SC controls WHERE they access from.'
+  },
+  {
+    id: 51, cat: 'security', diff: 'medium',
+    q: 'What is Secret Manager and how should secrets be accessed in applications?',
+    a: 'Secret Manager is a managed service for storing, versioning, and controlling access to secrets (API keys, passwords, certificates). Features: IAM-controlled access, versioning (secrets can have multiple versions), automatic rotation via Cloud Functions triggers, audit logging in Cloud Audit Logs, CMEK, replication (automatic or user-managed). Best practices: applications access secrets via Secret Manager API or client libraries (not environment variables), use Workload Identity for authentication, grant only secretmanager.secretAccessor role to the service account, audit all secret accesses.',
+    tip: 'Never store secrets in environment variables, config files, or code. Always Secret Manager. Grant secretmanager.secretAccessor — never secretmanager.admin.'
+  },
+  {
+    id: 52, cat: 'security', diff: 'advanced',
+    q: 'What is Binary Authorization and how does it secure container deployments?',
+    a: 'Binary Authorization is a deploy-time security control for GKE and Cloud Run that requires container images to be signed and attested before deployment. Workflow: CI/CD builds image → vulnerability scanner (Container Analysis) scans → if scan passes, attestor (a signer) creates a cryptographic attestation → Binary Authorization policy requires attestation before GKE/Cloud Run allows deployment. This ensures only images that have passed your security pipeline can run in production. Policies: require attestations, allow-all, deny-all, whitelist specific registries.',
+    tip: 'Binary Authorization implements the concept of "supply chain security" — you only run images that have been verified by your security pipeline.'
+  },
+  {
+    id: 53, cat: 'security', diff: 'advanced',
+    q: 'What is CMEK (Customer-Managed Encryption Keys) and when is it required?',
+    a: 'By default, GCP encrypts all data at rest with Google-managed keys. CMEK allows you to use your own encryption keys managed in Cloud KMS (Key Management Service). You create a key ring and crypto key in Cloud KMS, then configure GCP services (BigQuery, GCS, GCE, Cloud SQL, etc.) to use that key. Benefits: you control key lifecycle (rotation, revocation), compliance requirements (HIPAA, PCI-DSS often require customer-controlled keys), you can revoke access by disabling/destroying the key. CMEK adds latency and operational overhead. For even more control, use CSEK (Customer-Supplied Encryption Keys).',
+    tip: 'CMEK = key in Cloud KMS (GCP manages key storage). CSEK = you supply the actual key with each request (no storage in GCP). Use CMEK for regulatory compliance.'
+  },
+
+  // ── COST OPTIMIZATION ──────────────────────────────────────────
+  {
+    id: 54, cat: 'cost', diff: 'basic',
+    q: 'What are the main GCP cost optimization strategies for Compute Engine?',
+    a: 'Use Spot VMs for fault-tolerant workloads (up to 91% discount). Enable Sustained Use Discounts (automatic for long-running VMs). Use Committed Use Discounts for predictable workloads (up to 57%). Right-size VMs using Recommender API (identifies over-provisioned instances). Use custom machine types to exactly match vCPU/RAM needs. Use autoscaling with MIGs to scale down during low traffic. Use E2 machine types for general workloads (most cost-effective). Set VM schedules for dev/test environments (shut down nights/weekends). Enable idle VM shutdown policies.',
+    tip: 'Cost hierarchy: Spot VM (cheapest, interruptible) → Custom machine type + CUD → Standard + SUD. Always right-size first before discounts.'
+  },
+  {
+    id: 55, cat: 'cost', diff: 'medium',
+    q: 'How would you set up budget alerts and cost controls in GCP?',
+    a: 'Cloud Billing Budgets: create budgets at the billing account or project level, set thresholds (e.g., 50%, 90%, 100% of budget), send alerts to email or Pub/Sub. Use Pub/Sub + Cloud Function to automatically cap costs (e.g., disable billing, stop VMs). Cost allocation: apply labels to resources (team, env, service) and use labels in billing reports. Use Cost Table, Cost Breakdown, and Looker dashboards in Cloud Billing Reports. Set Organization Policy constraints to limit regions, machine types. Use Recommender for rightsizing and idle resource detection.',
+    tip: 'Pub/Sub budget alerts → Cloud Function to cap spend is the canonical automated cost control pattern. Know how to wire this together.'
+  },
+  {
+    id: 56, cat: 'cost', diff: 'medium',
+    q: 'How does GCP billing for Cloud Storage work and how do you reduce costs?',
+    a: 'GCS pricing components: storage (per GB/month, varies by storage class), operations (Class A: write/list, Class B: read), network egress (free within GCP region, costs for cross-region or internet). Cost reduction: use lifecycle policies to move cold data to Nearline/Coldline/Archive, enable intelligent tiering (auto-class) to automatically manage classes, use Requester Pays so data consumers bear egress costs, compress data before storage, use regional buckets (not dual/multi-region) unless HA is needed. Network: prefer same-region compute and storage, use Cloud CDN to reduce origin egress.',
+    tip: 'GCS Auto-class (Autoclass) automatically transitions objects to cheaper classes based on access patterns — zero lifecycle management overhead.'
+  },
+  {
+    id: 57, cat: 'cost', diff: 'advanced',
+    q: 'What is the Recommender API and what types of recommendations does it provide?',
+    a: 'The Recommender API uses ML to analyze GCP usage and provide optimization recommendations. Types: VM rightsizing (underutilized VMs — reduce machine type), Idle VM recommendations (VMs with near-zero usage), Idle disk recommendations (unattached persistent disks), SQL rightsizing (oversized Cloud SQL instances), Committed Use Discount recommendations (when you should buy CUDs), IAM recommendations (over-privileged roles), GKE cluster autoscaler recommendations, Cloud Run function concurrency optimization. Available via Console, CLI, or API. Also provides Insights (supporting data for recommendations).',
+    tip: 'Automate Recommender insights with a weekly Cloud Function that applies VM rightsizing recommendations in non-prod — then review before applying in prod.'
+  },
+
+  // ── HYBRID & MIGRATION ─────────────────────────────────────────
+  {
+    id: 58, cat: 'hybrid', diff: 'basic',
+    q: 'What is the Google Cloud Migration Framework and what are its phases?',
+    a: 'GCP\'s migration framework has 4 phases: Assess (inventory and categorize workloads, assess TCO, identify dependencies — using tools like Migrate to Virtual Machines, StratoZone), Plan (design cloud foundation — VPC, IAM, billing, landing zone), Migrate (execute migration using strategies: Lift & Shift, Improve & Move, Rip & Replace, Keep — using tools like Migrate to VMs, Database Migration Service, Transfer Service), Optimize (right-size, adopt cloud-native services, implement FinOps). The 6 R\'s of migration: Rehost, Replatform, Refactor, Repurchase, Retire, Retain.',
+    tip: 'Know the 6 R\'s and match them to tools: Rehost → Migrate to VMs. Replatform → Cloud SQL/App Engine. Refactor → Kubernetes/Microservices.'
+  },
+  {
+    id: 59, cat: 'hybrid', diff: 'medium',
+    q: 'What is the Database Migration Service (DMS) in GCP and what migrations does it support?',
+    a: 'Cloud DMS is a fully managed service for migrating databases to GCP with minimal downtime. Supported migrations: MySQL to Cloud SQL for MySQL (homogeneous), PostgreSQL to Cloud SQL for PostgreSQL, SQL Server to Cloud SQL for SQL Server, Oracle to Cloud SQL for PostgreSQL (heterogeneous, with schema conversion via Database Migration Service). How it works: configures a logical replication/CDC connection from source, migrates initial snapshot, then continuously replicates changes (CDC) so the source stays live during migration. Cut-over with minimal downtime.',
+    tip: 'DMS uses CDC (Change Data Capture) / binary log replication — this allows zero-downtime migration while your source database stays up for production traffic.'
+  },
+  {
+    id: 60, cat: 'hybrid', diff: 'medium',
+    q: 'What is Cloud Storage Transfer Service and when do you use it over gsutil?',
+    a: 'Storage Transfer Service automates and schedules data transfers to/from GCS: from AWS S3, Azure Blob Storage, HTTP/HTTPS sources, other GCS buckets, and on-premises data (using Transfer Service for On Premises Data agent). Benefits over gsutil: managed service with scheduling, job retries, filtering, bandwidth controls, incremental transfers, no need to run on your own machine. Use gsutil for small/one-time transfers or scripted operations. Use Transfer Service for: large-scale migrations, scheduled recurring sync, cross-cloud transfers. On-prem agent: install on-prem agents that fan out the transfer across multiple machines.',
+    tip: 'Transfer Service is the production-grade migration tool. gsutil is fine for <100GB. For TB/PB scale or recurring sync, always use Transfer Service.'
+  },
+
+  // ── ADDITIONAL ADVANCED QUESTIONS ─────────────────────────────
+  {
+    id: 61, cat: 'security', diff: 'advanced',
+    q: 'What is Organization Policy Service and how does it enforce governance at scale?',
+    a: 'Organization Policy Service lets you set constraints across your resource hierarchy (org, folder, project level) to prevent non-compliant configurations — regardless of IAM permissions. Examples: restrict resource locations to specific regions (constraints/gcp.resourceLocations), disable external IPs on VMs (constraints/compute.vmExternalIpAccess), require OS login, restrict which images VMs can use, disable serial port access. Policies are defined as Boolean or List constraints, can be inherited or overridden (allow/deny), and are evaluated before resource creation. Essential for multi-team org governance.',
+    tip: 'Organization Policy ≠ IAM. IAM controls what a user CAN do. Org Policy prevents certain configurations from being created at all — even by admins.'
+  },
+  {
+    id: 62, cat: 'core', diff: 'advanced',
+    q: 'What is the difference between Cloud Audit Logs and Cloud Logging?',
+    a: 'Cloud Logging is GCP\'s managed log management service — ingests, stores, and analyzes logs from GCP services, applications, and on-prem systems. Cloud Audit Logs are a specific subset of Cloud Logging that record who did what, where, and when on GCP resources. Types of Audit Logs: Admin Activity (always enabled, free, records admin operations — creating/modifying resources), Data Access (disabled by default, must enable, records data reads/writes — expensive), System Event (auto-generated for GCP system operations), Policy Denied. Use Cloud Audit Logs for compliance, forensics, and detecting unauthorized access.',
+    tip: 'Enable Data Access Audit Logs selectively — they generate massive log volume. Enable for sensitive services (Cloud SQL, BigQuery, GCS) only.'
+  },
+  {
+    id: 63, cat: 'devops', diff: 'advanced',
+    q: 'What is GKE Workload Identity Federation and how does it enable secure cross-cloud access?',
+    a: 'Workload Identity Federation lets workloads running on AWS, Azure, GitHub Actions, or other OIDC/SAML identity providers access GCP resources without service account keys. How it works: configure a Workload Identity Pool in GCP with the external IdP, the external workload exchanges its provider token for a short-lived GCP access token via the Security Token Service. Example: GitHub Actions CI job can access GCS/BigQuery using its OIDC token — no long-lived GCP keys stored in GitHub Secrets. Supports: AWS IAM roles, Azure AD, GitHub Actions, GitLab, Kubernetes clusters.',
+    tip: 'Workload Identity Federation = keyless auth from anywhere. This is the modern way to connect GitHub Actions, Terraform Cloud, and CI systems to GCP — no JSON keys.'
+  },
+  {
+    id: 64, cat: 'network', diff: 'advanced',
+    q: 'What is Network Intelligence Center and what tools does it provide?',
+    a: 'Network Intelligence Center is a centralized network observability and troubleshooting service. Tools: Topology (visualize your GCP network topology and traffic flows), Connectivity Tests (verify whether a packet would be allowed/blocked between two endpoints — without sending actual traffic — using static analysis of firewall rules, routes, and VPNs), Firewall Insights (analyze firewall rule usage, find overly permissive rules, find shadowed rules), Performance Dashboard (network latency between GCP regions and between GCP and internet), VPC Flow Logs (per-connection logs for network forensics).',
+    tip: 'Connectivity Tests is incredibly useful in interviews — it answers "why can\'t VM A reach VM B?" without sending actual packets. Pure static analysis of your network config.'
+  },
+  {
+    id: 65, cat: 'bigdata', diff: 'advanced',
+    q: 'What is Dataform and how does it help with data transformation workflows in BigQuery?',
+    a: 'Dataform (now natively integrated in BigQuery) is a data transformation framework for building data pipelines in BigQuery using SQL and JavaScript. Similar to dbt, it provides: SQLX files (SQL with config headers for table type, partitioning, clustering), dependency management (tables reference each other, Dataform builds in the right order), documentation, data quality assertions (tests), version control (Git integration), scheduled runs. It transforms raw data into analytics-ready tables/views in BigQuery using modular, testable SQL code.',
+    tip: 'Dataform vs. dbt: Dataform is GCP-native (BigQuery only), natively integrated in BigQuery Studio. dbt is open-source, supports many warehouses. Both are SQL-first transformation tools.'
+  },
+
+  // ── EXTRA QUESTIONS TO REACH 110 ──────────────────────────────
+  {
+    id: 66, cat: 'compute', diff: 'basic',
+    q: 'What is Cloud Functions (2nd gen) and what improvements does it bring?',
+    a: 'Cloud Functions 2nd gen is built on Cloud Run and Eventarc. Improvements over 1st gen: longer request timeout (up to 60 minutes for HTTP functions, 10 min for event), larger instances (up to 16 GB RAM, 4 vCPUs), concurrency (a single function instance can handle multiple concurrent requests — reduces cold starts), Cloud Run-based (more consistent behavior), traffic splitting for blue/green deployments, Eventarc-based triggers (300+ event types including direct BigQuery, Cloud Storage, Pub/Sub, Audit Log events). Functions 1st gen is still supported but 2nd gen is recommended.',
+    tip: 'Gen 2 key features: concurrency per instance (reduces cold starts/cost), 60-min timeout, and Eventarc triggers for 300+ event sources.'
+  },
+  {
+    id: 67, cat: 'storage', diff: 'medium',
+    q: 'What is AlloyDB for PostgreSQL and how does it differ from Cloud SQL?',
+    a: 'AlloyDB is a fully managed PostgreSQL-compatible database designed for demanding enterprise workloads. Key differences from Cloud SQL: disaggregated storage (log-structured storage engine separate from compute — scale storage independently), columnar engine (in-memory columnar store for OLAP queries — up to 100x faster analytics), AI/ML integration (built-in vector search, pgvector, Vertex AI integration), up to 4x faster than standard PostgreSQL for transactional workloads, 2x faster than Amazon Aurora PostgreSQL. AlloyDB is fully PostgreSQL-compatible. Choose AlloyDB for high-performance OLTP with occasional analytics needs.',
+    tip: 'AlloyDB = Google\'s Aurora competitor. Columnar engine makes it unique — single database for both OLTP and analytical queries. PostgreSQL-compatible.'
+  },
+  {
+    id: 68, cat: 'devops', diff: 'medium',
+    q: 'What is Eventarc and how does it unify event-driven architectures on GCP?',
+    a: 'Eventarc is GCP\'s managed event routing service that connects event sources to event destinations using CloudEvents format (CNCF standard). Event sources: 300+ GCP services via Cloud Audit Logs, Pub/Sub, direct event providers (GCS, BigQuery, Cloud Build). Destinations: Cloud Run, GKE, Cloud Functions (2nd gen), Workflows. Benefits: standardized event format (CloudEvents), fine-grained filtering (by resource, method), no polling, guaranteed delivery. Compared to manually wiring Pub/Sub + push subscriptions, Eventarc provides a declarative, unified event routing layer.',
+    tip: 'Eventarc = the event bus of GCP. Think of it as the SNS/EventBridge equivalent. CloudEvents format means interoperability with CNCF ecosystem tools.'
+  },
+  {
+    id: 69, cat: 'ml', diff: 'advanced',
+    q: 'What is Vertex AI Vector Search (formerly Matching Engine) and how is it used?',
+    a: 'Vertex AI Vector Search is a fully managed Approximate Nearest Neighbor (ANN) search service for high-dimensional vectors (embeddings). Use cases: semantic search, recommendation engines, image similarity, document retrieval for RAG (Retrieval Augmented Generation). Flow: generate embeddings (using Vertex AI embeddings model, Gemini, or custom models) → index them in Vector Search → query with a vector to find most similar items. Supports HNSW and tree-based ANN algorithms. Returns top-k nearest neighbors in milliseconds at billion-vector scale. Integrates with Vertex AI for RAG pipelines.',
+    tip: 'Vector Search is the foundation for RAG on GCP. Embed documents → store in Vector Search → at query time, retrieve top-k relevant chunks → pass to Gemini as context.'
+  },
+  {
+    id: 70, cat: 'core', diff: 'medium',
+    q: 'What is Cloud Monitoring and what can you monitor with it?',
+    a: 'Cloud Monitoring (formerly Stackdriver) collects metrics, events, and metadata from GCP services, AWS, and custom applications. Components: Metrics Explorer (query and visualize metrics), Dashboards, Alerting Policies (notify via email, PagerDuty, Slack, Pub/Sub when metrics cross thresholds), Uptime Checks (external availability monitoring), Service Monitoring (SLOs and error budgets), Group Monitoring (monitor logical groups of resources). Uses MQL (Monitoring Query Language) for advanced queries. Integrates with Prometheus (via managed Prometheus in GKE). Also supports custom metrics via Cloud Monitoring API or OpenTelemetry.',
+    tip: 'Know the difference: Cloud Logging = logs. Cloud Monitoring = metrics. Cloud Trace = distributed tracing. Cloud Profiler = CPU/heap profiling. Together = Google Cloud Observability.'
+  },
+  {
+    id: 71, cat: 'security', diff: 'medium',
+    q: 'What is Security Command Center (SCC) and what does it provide?',
+    a: 'Security Command Center is GCP\'s centralized security and risk management platform. Tiers: Standard (free, basic findings) and Premium (ML-based threat detection, compliance monitoring). Provides: Asset Discovery and Inventory (all GCP resources), Vulnerability Assessment (VM vulnerabilities via Security Health Analytics), Threat Detection (via Event Threat Detection — detects crypto mining, data exfiltration, brute force), Misconfiguration Detection (overly permissive service accounts, public GCS buckets, open firewall rules), Compliance posture (CIS, PCI DSS, HIPAA, ISO 27001), Container Threat Detection (runtime threats in GKE pods).',
+    tip: 'SCC is GCP\'s "single pane of glass" for security. Always enable it at the Organization level — project-level SCC misses cross-project attack patterns.'
+  },
+  {
+    id: 72, cat: 'network', diff: 'medium',
+    q: 'What is Cloud DNS and what are the differences between public and private zones?',
+    a: 'Cloud DNS is a managed, scalable DNS service powered by Google\'s global DNS infrastructure. Public Zones: DNS records accessible from the internet (e.g., api.example.com → external IP). Answers external DNS queries. Private Zones: DNS records visible only within specified VPC networks (e.g., db.internal → 10.0.0.5). Used for internal service discovery. Peering Zones: extend private zone records to peered VPCs. Forwarding Zones: forward DNS queries to external resolvers (e.g., on-premises DNS servers). Cloud DNS supports DNSSEC for public zones and split-horizon DNS (same name resolves differently internally vs. externally).',
+    tip: 'Private zones are critical for microservice discovery. db.internal resolves to the actual internal IP only inside your VPC — outside gets NXDOMAIN.'
+  },
+  {
+    id: 73, cat: 'core', diff: 'basic',
+    q: 'What is the difference between Cloud Identity and Google Workspace for GCP?',
+    a: 'Google Workspace (formerly G Suite): provides business productivity tools (Gmail, Drive, Docs, Meet) plus Cloud Identity capabilities — used when you need both collaboration tools and GCP. Cloud Identity: identity-only service — provides user/group management, SSO, MDM, device management without the Workspace productivity apps. For GCP organizations, both create an Organization node in GCP. Cloud Identity Free tier: up to 50 users/groups with basic identity features. Paid Cloud Identity includes advanced endpoint management and SSO. Many enterprises use Cloud Identity for GCP governance and have a separate email provider.',
+    tip: 'If a company only needs GCP governance without Google productivity tools, Cloud Identity (not Workspace) is the right choice.'
+  },
+  {
+    id: 74, cat: 'bigdata', diff: 'medium',
+    q: 'What is Looker and how does it fit into GCP\'s analytics ecosystem?',
+    a: 'Looker is Google\'s enterprise BI and data exploration platform (acquired in 2019, now Google Looker). Key differentiator: LookML — a semantic modeling language that defines metrics, dimensions, and business logic in version-controlled YAML-like code. This ensures consistent metric definitions across all reports. Looker Studio (free): simpler self-service BI, connects to BigQuery, GCS, Sheets, 800+ connectors — good for dashboards and data visualization. Looker (paid): enterprise governance, embedded analytics, APIs, LookML semantic layer, connects to any SQL database. Looker integrates natively with BigQuery and Vertex AI.',
+    tip: 'Looker Studio (free) = Google\'s Data Studio replacement. Looker (paid) = enterprise BI with LookML semantic layer. Know both for GCP data interviews.'
+  },
+  {
+    id: 75, cat: 'devops', diff: 'basic',
+    q: 'What is Cloud Source Repositories and how does it compare to GitHub integration in Cloud Build?',
+    a: 'Cloud Source Repositories (CSR) is GCP\'s managed private Git hosting service — fully integrated with GCP IAM, Cloud Build, and Cloud Debugger. Supports standard Git operations. Mirrors GitHub and Bitbucket repos. For CI/CD with Cloud Build, you can trigger builds from: CSR (native), GitHub (via GitHub App or webhook), Bitbucket, and Azure DevOps. CSR is free for up to 5 users and 50 GB storage. Most organizations use GitHub/GitLab for source control and trigger Cloud Build via webhooks or Cloud Build GitHub App — CSR is mainly used for simpler, GCP-native setups.',
+    tip: 'CSR is GCP-native Git but most enterprises prefer GitHub or GitLab. Both integrate well with Cloud Build. CSR advantage: tighter IAM integration and free mirroring.'
+  },
+  {
+    id: 76, cat: 'compute', diff: 'advanced',
+    q: 'What is GKE Autopilot and what are its security benefits?',
+    a: 'GKE Autopilot is a fully managed GKE mode where Google manages node provisioning, scaling, upgrades, security hardening, and OS patching. Security benefits: nodes are not customer-accessible (no SSH to nodes), workloads run with hardened node configurations, Workload Identity is enabled by default, Shielded Nodes enforced by default (Secure Boot, vTPM, Integrity Monitoring), no privileged containers or hostPath volumes (workloads that need node-level access are rejected), automatic security patches without user action. Cost: per-pod billing (CPU + memory requested) — no wasted node capacity.',
+    tip: 'Autopilot is more secure than Standard mode by default — you can\'t accidentally run privileged containers. Google\'s hardened baseline is enforced cluster-wide.'
+  },
+  {
+    id: 77, cat: 'storage', diff: 'advanced',
+    q: 'What is BigQuery Storage API and when should you use it?',
+    a: 'The BigQuery Storage Read/Write API is a high-throughput API for reading BigQuery table data in Apache Arrow or Avro format — faster than the regular table export or query-based approach. Use cases: training data extraction for ML (faster than exporting to GCS), reading large tables into Spark/Dataproc/pandas without intermediate export, real-time analytics engines that need direct table access. The Storage Write API replaces streaming inserts for higher throughput (committed/buffered/pending write modes) with exactly-once guarantees and lower cost than streaming inserts. Supported by Dataflow, Spark Connector, pandas-gbq.',
+    tip: 'Storage Read API is critical for ML training pipelines — extract TBs of BigQuery data directly into TF/PyTorch without exporting to GCS first. Much faster than `bq export`.'
+  },
+  {
+    id: 78, cat: 'hybrid', diff: 'advanced',
+    q: 'What is the Cloud Interconnect Partner vs. Dedicated and how do you choose between them?',
+    a: 'Dedicated Interconnect: direct physical connection between your on-prem network and Google\'s network at a Google colocation facility (10 Gbps or 100 Gbps circuits). You or your network provider must be present in a colocation facility that Google supports. Best for: very high bandwidth (100 Gbps+), strict latency requirements. Partner Interconnect: connects through a supported service provider (carrier) — you don\'t need to be at a colocation facility. Capacity: 50 Mbps to 50 Gbps. Best for: organizations not near a Google POP, lower bandwidth needs, faster setup. Both provide SLA-backed private connectivity that doesn\'t traverse the public internet.',
+    tip: 'Dedicated = you own the circuit. Partner = a carrier provides the circuit. Dedicated has lower latency and higher capacity; Partner is more accessible.'
+  },
+  {
+    id: 79, cat: 'ml', diff: 'medium',
+    q: 'What is AutoML in Vertex AI and when would you use it vs. custom training?',
+    a: 'Vertex AI AutoML trains high-quality ML models with minimal ML expertise needed. Supported data types: tabular (structured data), image (classification, object detection, segmentation), text (classification, entity extraction, sentiment), video (classification, object tracking, action recognition). AutoML handles: feature engineering, architecture search, hyperparameter tuning, model evaluation. Use AutoML when: limited ML team, rapid prototyping, baseline comparison for custom models, use case fits standard AutoML model types. Use Custom Training when: specialized architectures needed, more control over features and training, AutoML accuracy insufficient, large-scale training.',
+    tip: 'AutoML is often used as a baseline — if custom model can\'t significantly beat AutoML, why pay for the custom model complexity?'
+  },
+  {
+    id: 80, cat: 'security', diff: 'medium',
+    q: 'What is Chronicle SIEM on GCP and how does it work?',
+    a: 'Google Chronicle is a cloud-native Security Information and Event Management (SIEM) platform built on Google\'s infrastructure. It ingests security logs at massive scale (petabytes), normalizes them using the Unified Data Model (UDM), stores them for up to 1 year at a fixed price, and enables rapid threat hunting using YARA-L 2.0 rules. Unlike traditional SIEMs, Chronicle searches petabytes of 1-year log history in seconds. Integrates with VirusTotal for threat intelligence. Includes: SOAR (Security Orchestration, Automation, and Response via Siemplify), detection engine, dashboards, and playbooks.',
+    tip: 'Chronicle\'s key differentiator: 1-year log retention at fixed cost (not per-GB), subsecond search across all historical logs. Traditional SIEMs charge per GB ingested.'
+  },
+  {
+    id: 81, cat: 'cost', diff: 'advanced',
+    q: 'What is GCP FinOps and how do you implement it using GCP tools?',
+    a: 'FinOps (Financial Operations) on GCP involves: Visibility (Cloud Billing Reports, BigQuery billing export + Looker Studio dashboards for cost breakdown by label/project/service), Allocation (resource labeling strategy — mandatory labels enforced via Organization Policy, charge-back to business units via billing subaccounts), Optimization (Recommender API for rightsizing/idle resources, CUDs for committed capacity, Spot VMs for batch), Governance (budget alerts with Pub/Sub automation, Organization Policy to restrict expensive resources, quotas). Best practice: export billing data to BigQuery and build custom FinOps dashboards showing cost per team/product.',
+    tip: 'FinOps = culture + process + tools. On GCP: labels for allocation → BigQuery export for analysis → Recommender for optimization → Budget alerts for governance.'
+  },
+  {
+    id: 82, cat: 'core', diff: 'advanced',
+    q: 'What is the GCP Landing Zone and what does a well-architected one include?',
+    a: 'A GCP Landing Zone is a pre-configured, scalable foundation for deploying workloads in GCP following best practices. Components: Organization node (Cloud Identity/Workspace), Folder structure (environments, business units), Shared VPC (host project, service projects), centralized network hub (VPN/Interconnect, Cloud Router), centralized logging project (Cloud Logging aggregated log sinks), security project (SCC, Chronicle, Secret Manager), IAM structure (groups in Cloud Identity, predefined roles), Organization Policies (constraints), Billing account with subaccounts and budgets. Tools: Google Cloud Setup Checklist, Terraform Enterprise Landing Zone module, Google Cloud Foundation Toolkit.',
+    tip: 'Landing Zone = your GCP "home" before workloads arrive. It should be deployable via Terraform, version-controlled in Git, and follow least-privilege and defense-in-depth principles.'
+  },
+  {
+    id: 83, cat: 'network', diff: 'basic',
+    q: 'What are GCP Firewall Rules and what are the different components?',
+    a: 'GCP Firewall Rules control ingress and egress traffic to/from VM instances. Components: Direction (INGRESS or EGRESS), Priority (0-65535, lower = higher priority), Action (ALLOW or DENY), Target (all instances in VPC, service account, or network tag), Source/Destination (IP ranges, service accounts, network tags), Protocol and Ports. Network tags allow applying firewall rules to specific VMs by attaching a tag (not IAM-based). Default rules: implied deny-all ingress, implied allow-all egress. Every VPC has default firewall rules that can be modified. Firewall rules are stateful (responses to allowed connections are automatically allowed).',
+    tip: 'Network tags on VMs + firewall rules targeting those tags = dynamic, scalable firewall management. Better than IP-based rules for auto-scaling fleets.'
+  },
+  {
+    id: 84, cat: 'compute', diff: 'medium',
+    q: 'What is Cloud NAT and when is it needed?',
+    a: 'Cloud NAT (Network Address Translation) provides outbound internet access for VM instances without external IP addresses. It\'s a software-defined, distributed NAT managed by GCP — not a VM you manage. When needed: VMs with private-only IPs need to download packages (apt-get, yum), access external APIs, or pull Docker images from Docker Hub. Cloud NAT is configured per region, per VPC, associated with a Cloud Router. It allocates a pool of external IPs automatically and supports custom NAT IP configuration. Does NOT support inbound traffic (use Load Balancer or external IP for inbound).',
+    tip: 'Cloud NAT = outbound internet for private VMs. Private Google Access = outbound access to Google APIs only. Both are often needed together.'
+  },
+  {
+    id: 85, cat: 'bigdata', diff: 'basic',
+    q: 'What is Datastream and how does it enable CDC from databases to BigQuery?',
+    a: 'Datastream is GCP\'s serverless Change Data Capture (CDC) and replication service. It reads from source databases (MySQL, PostgreSQL, Oracle, SQL Server) using CDC (reading transaction logs) and streams changes to destinations: BigQuery, Cloud Storage, Dataflow. For BigQuery: Datastream continuously replicates inserts, updates, and deletes in near-real-time (low-minute latency). Use cases: real-time analytics on operational data, database migration with live sync, data lake synchronization. Setup: configure source database for CDC (binary logging for MySQL, LogMiner for Oracle) → create Datastream connection profile → create stream.',
+    tip: 'Datastream → BigQuery is now a managed, no-code pattern. Traditionally you\'d need Dataflow + Debezium + Kafka. Datastream eliminates all that complexity.'
+  },
+  {
+    id: 86, cat: 'ml', diff: 'basic',
+    q: 'What is Vertex AI Gemini API and what can you do with it?',
+    a: 'The Gemini API on Vertex AI provides access to Google\'s Gemini family of multimodal foundation models. Capabilities: text generation, code generation, summarization, question answering, multimodal understanding (text + images + video + audio + PDF), function calling (structured tool use), embeddings (text and multimodal), system instructions, grounding (with Google Search or your documents). Models: Gemini Ultra (most powerful), Gemini Pro (balanced), Gemini Flash (fastest, cost-effective), Gemini Nano (on-device). Accessed via Vertex AI SDK or Vertex AI API. Supports enterprise features like CMEK, VPC Service Controls, and audit logging.',
+    tip: 'Gemini on Vertex AI = enterprise-grade LLM with GCP integration. Key enterprise features: grounding with your own data, Vertex AI RAG Engine, and VPC Service Controls compliance.'
+  },
+  {
+    id: 87, cat: 'devops', diff: 'advanced',
+    q: 'What is Skaffold and how does it integrate with GKE development workflows?',
+    a: 'Skaffold is an open-source CLI tool (now a CNCF project) for continuous development of Kubernetes applications. It automates: building Docker images, pushing to a registry, deploying to Kubernetes (kubectl apply, Helm, Kustomize), port-forwarding, and log streaming. In development mode (skaffold dev): watches source files, triggers rebuilds and redeploys on change — hot-reload for Kubernetes. In production CI/CD: Cloud Deploy uses Skaffold as its rendering/deploy layer — skaffold.yaml defines how to build and deploy the app. Skaffold supports multiple image builders (Docker, Kaniko, Cloud Build) and deployers.',
+    tip: 'Skaffold is the standard build/deploy glue in GKE CI/CD. Cloud Deploy requires a skaffold.yaml — understanding Skaffold is essential for GCP DevOps roles.'
+  },
+  {
+    id: 88, cat: 'storage', diff: 'basic',
+    q: 'What is Cloud Filestore and when would you use it over Cloud Storage?',
+    a: 'Cloud Filestore is a managed NFS (Network File System) service on GCP. Key difference from Cloud Storage: Filestore provides a POSIX-compliant filesystem interface (directories, files, permissions) mountable by GCE VMs and GKE pods via NFS. Use Filestore when: applications require a shared filesystem (e.g., CMS, rendering, shared config), legacy applications expecting filesystem semantics, need low-latency file access (sub-millisecond) with high IOPS. Tiers: Basic HDD/SSD, Enterprise (regional HA, 99.99% SLA), Zonal/High Scale. Cloud Storage is better for unstructured data access via API (no filesystem semantics needed).',
+    tip: 'Filestore = shared NFS filesystem. Cloud Storage = object storage via HTTP API. Choose Filestore for legacy apps that need to `ls`, `cat`, `mv` files on a shared drive.'
+  },
+  {
+    id: 89, cat: 'network', diff: 'advanced',
+    q: 'What is Cloud Router and what protocols does it use?',
+    a: 'Cloud Router is a fully managed, software-defined BGP (Border Gateway Protocol) router on GCP. It works with Cloud VPN and Cloud Interconnect to dynamically exchange routes between your GCP VPC and on-premises network. Using BGP, when you add a new subnet in GCP, Cloud Router automatically advertises it to your on-prem BGP peer — no manual route updates needed. Cloud Router supports: standard BGP attributes (AS path, MED, local preference), custom route advertisement (advertise specific prefixes), graceful BGP restart, route filtering. It enables dynamic routing for hybrid connectivity vs. static routes in classic VPN.',
+    tip: 'Cloud Router + BGP = dynamic routing. No Cloud Router = static routes (must manually update when IP ranges change). Cloud Router is required for Cloud Interconnect.'
+  },
+  {
+    id: 90, cat: 'core', diff: 'medium',
+    q: 'What is Cloud Trace and Cloud Profiler and how do they help in production?',
+    a: 'Cloud Trace: distributed tracing service that collects latency data from GCP applications (App Engine, Cloud Run, GKE, etc.) and your own instrumented applications (using OpenTelemetry). Shows end-to-end request latency breakdown across microservices — identify which service is the bottleneck. Cloud Profiler: continuous CPU and heap profiling of production applications with very low overhead (<1% CPU). Identifies hot code paths consuming the most resources. Supports: Python, Java, Go, Node.js. Both integrate with Cloud Monitoring and Logging. Together with Cloud Logging and Monitoring, they form GCP\'s full observability stack.',
+    tip: 'Trace = latency + distributed call graph. Profiler = what code is consuming CPU/memory. Use Trace for "why is this request slow?" and Profiler for "which function is burning CPU?".'
+  },
+  {
+    id: 91, cat: 'compute', diff: 'medium',
+    q: 'What is Confidential Computing on GCP and what scenarios require it?',
+    a: 'Confidential Computing encrypts data not just at rest and in transit, but also in use (while being processed in memory). GCP implements this with Confidential VMs (using AMD SEV — Secure Encrypted Virtualization) and Confidential GKE Nodes. The VM\'s memory is encrypted with a key that even Google cannot access. Required for: regulated industries (healthcare, financial) processing sensitive data, multi-party computation where multiple organizations share data without exposing raw values, scenarios where you don\'t fully trust the cloud provider. Confidential VMs are available on N2D, C2D, and C3 machine types.',
+    tip: 'Confidential VMs protect against a compromised hypervisor — even if GCP infrastructure is breached, your VM memory remains encrypted. Key for zero-trust cloud architectures.'
+  },
+  {
+    id: 92, cat: 'hybrid', diff: 'medium',
+    q: 'What is Migrate to Virtual Machines (M2VM) and how does it work?',
+    a: 'Migrate to Virtual Machines (formerly Velostrata) migrates on-premises VMs and VMware workloads to GCE without rebuilding or re-platforming. How it works: streaming migration — GCP streams the VM\'s storage over the network while the VM keeps running on-prem. Once storage is mostly replicated, a brief cutover period migrates the remaining data and the VM starts on GCE. The VM runs on GCP within minutes. Supports: VMware, physical servers, Amazon EC2, Azure VMs. Migrated VMs use the same OS and configuration. For lift-and-shift migrations of 100s of VMs.',
+    tip: 'M2VM key feature: the VM runs on GCP within minutes (via streaming), even before all data is copied. Minimal downtime — critical for production migrations.'
+  },
+  {
+    id: 93, cat: 'bigdata', diff: 'advanced',
+    q: 'What is Bigtable\'s data model and how do you design an efficient row key?',
+    a: 'Bigtable is a wide-column NoSQL store. Data model: rows (identified by row key), column families (defined at table creation), column qualifiers (within family, dynamic), cell (value at a row/column/timestamp intersection, stores up to 100 versions). Everything is indexed only by row key — no secondary indexes. Row key design is critical for performance and avoiding hotspots. Best practices: use forward scan patterns (lexicographic ordering), reverse timestamp for time-series (newest first), field swap (user_id + timestamp instead of timestamp + user_id), hash prefix to distribute writes. Avoid monotonically increasing keys (hotspots).',
+    tip: 'Bigtable row key is everything — it\'s the only index. Poor key design → hotspots (one node overwhelmed). Good key design → even distribution across nodes.'
+  },
+  {
+    id: 94, cat: 'security', diff: 'advanced',
+    q: 'What is Access Transparency and why is it important for compliance?',
+    a: 'Access Transparency provides near-real-time logs when Google personnel (employees) access your GCP data for support or operations. This addresses a key concern: "Can Google employees read my data?" with a "Yes, but we log every access and tell you about it." Logs include: what data was accessed, which Google employee, what justification, approval ticket. Available for: BigQuery, Cloud Storage, Compute Engine, Cloud KMS, and other services. Required for many compliance frameworks (FedRAMP, HIPAA, ISO 27001) where you need auditability of cloud provider access. Enabled at organization level.',
+    tip: 'Access Transparency + Access Approval (require your approval before Google accesses your data) = maximum control over provider access. Key for FedRAMP and government customers.'
+  },
+  {
+    id: 95, cat: 'devops', diff: 'medium',
+    q: 'What is Cloud Scheduler and Cloud Tasks and when do you use each?',
+    a: 'Cloud Scheduler: fully managed cron job service. Define a schedule (cron format), a target (HTTP endpoint, Cloud Pub/Sub topic, App Engine), and a schedule. Like cron-as-a-service. Guaranteed execution at the scheduled time. Use for: periodic jobs (daily reports, cleanup tasks, scheduled API calls). Cloud Tasks: managed task queue for asynchronous, distributed task execution with rate limiting, retries, and deduplication. Publisher creates tasks; workers (Cloud Run, App Engine) process them at controlled rates. Use for: rate-limited API calls, fan-out operations, background processing that needs retry logic and task management. Together: Scheduler triggers periodic tasks, Tasks manage high-volume async workloads.',
+    tip: 'Scheduler = cron in the cloud. Tasks = SQS-like queue with dispatch rate control. Use both: Scheduler to enqueue tasks, Tasks to process them reliably at scale.'
+  },
+  {
+    id: 96, cat: 'core', diff: 'medium',
+    q: 'What is Cloud Workflows and how does it orchestrate multi-step processes?',
+    a: 'Cloud Workflows is a serverless orchestration service for composing Google Cloud and HTTP-based API services into reliable workflows. You define workflows in YAML/JSON syntax with: steps, conditions, loops, parallel branches, subworkflows, retries with backoff, error handling. Workflows call HTTP services, GCP APIs (BigQuery, Cloud Storage, Pub/Sub), connectors (pre-built integrations), and Cloud Functions/Run. Use cases: multi-step data pipelines with error handling, approval workflows, orchestrating microservices, periodic automation sequences. Charged per step executed — very cost-effective. Compared to Pub/Sub: Workflows are synchronous orchestration with state; Pub/Sub is asynchronous event messaging.',
+    tip: 'Workflows = the "Step Functions" of GCP. For complex multi-step flows needing error handling and branching logic. Not for ML pipelines (use Vertex Pipelines instead).'
+  },
+  {
+    id: 97, cat: 'network', diff: 'medium',
+    q: 'What is Private Service Connect (PSC) and how does it differ from VPC Peering?',
+    a: 'Private Service Connect (PSC) allows consumers to access managed services (like Cloud SQL, BigQuery, Vertex AI) and third-party services via a private endpoint (private IP) within their VPC — without exposing the service to the internet or requiring VPC peering. Compared to VPC Peering: PSC creates a one-way connection (consumer → provider) with no route exchange, no overlapping IP concern, and no transitive access. Used for: accessing Google APIs privately (PSC endpoint for googleapis.com), accessing Cloud SQL via Private Service Connect (vs. private IP peering), exposing your own Cloud Run service to other VPCs without full peering.',
+    tip: 'PSC vs Peering: Peering = bidirectional, transitive concern. PSC = unidirectional, service-specific, no overlapping IP concerns. PSC is the modern private access pattern.'
+  },
+  {
+    id: 98, cat: 'ml', diff: 'advanced',
+    q: 'What is RAG (Retrieval Augmented Generation) and how do you implement it on GCP?',
+    a: 'RAG augments LLM responses with retrieved context from your own data — reducing hallucinations and enabling domain-specific knowledge. GCP RAG implementation: Document ingestion: parse documents (PDFs, GCS files), chunk into passages → generate embeddings using Vertex AI Embeddings API → store in Vertex AI Vector Search index. Query time: embed the user question → search Vector Search for top-k relevant passages → construct prompt with retrieved context + question → send to Gemini API → return grounded response. GCP also provides Vertex AI RAG Engine (fully managed RAG with corpus management) for no-code RAG setup. Grounding with Google Search for up-to-date information.',
+    tip: 'RAG Pipeline: Chunk → Embed → Index → Retrieve → Augment → Generate. Vertex AI RAG Engine handles all of this with managed APIs — no vector database management needed.'
+  },
+  {
+    id: 99, cat: 'storage', diff: 'medium',
+    q: 'What are GCS Object Versioning and Retention Policies?',
+    a: 'Object Versioning: when enabled on a GCS bucket, every update/delete creates a new version (non-current version). Allows recovery of accidentally deleted or overwritten objects. Each version has a generation number. Non-current versions incur storage costs — use lifecycle rules to delete old versions after N days. Retention Policies: set a minimum retention period for objects in a bucket. No one (not even Storage Admin) can delete or modify objects before the retention period expires. Bucket Lock makes the retention policy permanent (cannot be reduced or removed). Use for: regulatory compliance (SEC Rule 17a-4, FINRA, HIPAA) requiring immutable audit logs.',
+    tip: 'Versioning = recovers accidental deletes. Retention Policy + Bucket Lock = WORM (Write Once Read Many) compliance for regulatory immutability requirements.'
+  },
+  {
+    id: 100, cat: 'core', diff: 'basic',
+    q: 'What is the Google Cloud CLI (gcloud) and what are some essential commands?',
+    a: 'gcloud is the primary CLI for interacting with GCP services. Essential commands: `gcloud init` (configure CLI, authenticate, set project), `gcloud auth login / application-default login` (authenticate for SDK vs. ADC), `gcloud config set project PROJECT_ID`, `gcloud compute instances list`, `gcloud container clusters get-credentials CLUSTER`, `gcloud storage ls gs://bucket`, `gcloud iam service-accounts list`, `gcloud projects list`. Components: gcloud (core), gsutil → now `gcloud storage`, bq CLI (BigQuery), kubectl (GKE — installed separately). Application Default Credentials (ADC) allows code to authenticate automatically using the logged-in account.',
+    tip: 'Know Application Default Credentials (ADC): your code uses the same auth as gcloud. In production, ADC picks up the service account attached to the VM/Cloud Run/GKE pod automatically.'
+  },
+  {
+    id: 101, cat: 'devops', diff: 'advanced',
+    q: 'What is GKE Gateway API and how does it differ from Ingress?',
+    a: 'GKE Gateway API is the next generation of Kubernetes traffic management (successor to Ingress). Gateway API provides: richer routing rules (header-based, weight-based for traffic splitting), role-based separation (platform team manages Gateway class/Gateway, app team manages HTTPRoute), support for blue/green and canary deployments natively, multi-cluster support, protocols beyond HTTP (TCP, UDP, GRPC, TLS). On GKE, GatewayClass maps to GCP Load Balancers (internal/external HTTPS LB, multi-cluster). Ingress on GKE only creates HTTP(S) LB with limited routing. Gateway API is more expressive and aligns with modern GitOps workflows.',
+    tip: 'Gateway API = Ingress v2. It separates concerns: platform team manages infra (Gateway), dev team manages routes (HTTPRoute). GA in GKE and the Kubernetes-recommended approach.'
+  },
+  {
+    id: 102, cat: 'security', diff: 'basic',
+    q: 'What are IAM Conditions and what use cases do they enable?',
+    a: 'IAM Conditions allow granting IAM roles conditionally based on attributes of the request. Conditions can be based on: resource type (only apply role to GCS buckets, not other resources), resource name (only specific GCS bucket), date/time (role expires after a date, or only active during business hours), request IP (only allow from specific IP ranges), access level (from BeyondCorp endpoint verification). Use cases: temporary access grants with expiry (contractors), emergency break-glass access, time-bounded production access, MFA/device-level access requirements. Conditions are specified in IAM policy bindings using Common Expression Language (CEL).',
+    tip: 'IAM Conditions are essential for just-in-time (JIT) access — grant a role with an expiry condition for contractor or emergency access. No need to remember to revoke manually.'
+  },
+  {
+    id: 103, cat: 'bigdata', diff: 'medium',
+    q: 'What is Cloud Composer and how does it relate to Apache Airflow?',
+    a: 'Cloud Composer is a managed Apache Airflow service on GCP. Airflow is an open-source workflow orchestration platform — define DAGs (Directed Acyclic Graphs) in Python to schedule and monitor workflows. Cloud Composer handles: infrastructure provisioning (GKE cluster + Airflow components), upgrades, scaling, and monitoring. Use cases: ETL/ELT pipeline orchestration, ML pipeline scheduling, complex multi-step workflows with dependencies. Cloud Composer 2 uses GKE Autopilot and scales to zero workers (cost optimization). Integrates natively with GCP services via Airflow GCP operators (BigQueryOperator, DataflowOperator, DataprocOperator).',
+    tip: 'Composer = "Airflow on GCP with less ops". If you\'re already using Airflow on-prem, Cloud Composer is the natural migration target. Vertex AI Pipelines is better for ML-specific workflows.'
+  },
+  {
+    id: 104, cat: 'hybrid', diff: 'basic',
+    q: 'What is BeyondCorp Enterprise and how does it enable Zero Trust access?',
+    a: 'BeyondCorp Enterprise is GCP\'s Zero Trust access solution (based on Google\'s internal BeyondCorp model). Zero Trust = "never trust, always verify" — access is not based on network location (inside/outside VPN) but on continuous verification of user identity, device health, and context. Components: Identity-Aware Proxy (IAP) — controls access to web apps and SSH/RDP based on identity and context (no VPN needed), Endpoint Verification — verifies device OS version, encryption, patching status, Chrome Enterprise integration, Access Context Manager — defines access levels (trusted device, corp IP, multi-region). Replace VPN with BeyondCorp for more granular, context-aware access.',
+    tip: 'BeyondCorp = no VPN. Access is controlled by who you are + what device you\'re on + your location — continuously verified per request, not just at login.'
+  },
+  {
+    id: 105, cat: 'compute', diff: 'advanced',
+    q: 'What is Shielded VMs and what security guarantees do they provide?',
+    a: 'Shielded VMs provide verifiable integrity for GCE instances, protecting against boot-level and rootkit attacks. Components: Secure Boot (only runs signed boot software — UEFI firmware → bootloader → OS kernel → OS; rejects unsigned code), Virtual Trusted Platform Module (vTPM) — software TPM that enables Measured Boot (measures and logs the boot process into PCRs), Integrity Monitoring (compares current boot measurements against a known-good baseline; alerts via Cloud Monitoring if changed). Shielded VMs are supported on most GCE machine types and are enforced by default on GKE Autopilot. Enable via `--shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring`.',
+    tip: 'Shielded VMs protect against firmware/bootloader compromises (bootkits). Baseline measurement is taken at first boot; any change triggers an alert. Enable for all production VMs.'
+  },
+  {
+    id: 106, cat: 'core', diff: 'medium',
+    q: 'What is Cloud Armor Adaptive Protection and how does it work?',
+    a: 'Cloud Armor Adaptive Protection is an ML-based DDoS detection and mitigation system. It continuously analyzes traffic patterns across all Cloud Armor-protected backends. When it detects a potential attack (unusual traffic surge, anomalous request patterns), it: (1) generates an alert in Cloud Monitoring, (2) provides a suggested WAF rule to mitigate the attack, (3) optionally auto-deploys the mitigation rule (with auto-deploy threshold tuning). Adaptive Protection learns your normal traffic baseline over 24 hours and detects deviations that match attack patterns. It operates at Google\'s edge — mitigating before traffic reaches your LB.',
+    tip: 'Adaptive Protection is GCP\'s autonomous DDoS defense. It generates a suggested rule during an ongoing attack — you can review and deploy with one click (or auto-deploy).'
+  },
+  {
+    id: 107, cat: 'storage', diff: 'advanced',
+    q: 'What is Spanner\'s interleaved table design and why is it used?',
+    a: 'In Cloud Spanner, interleaved tables allow you to physically co-locate related child table rows with parent rows on the same Spanner server. This optimizes join performance between parent and child tables. Example: Albums table interleaved in Users table — all albums for a user are stored next to the user row. Without interleaving, Spanner might need to access different servers to join User + Albums. With interleaving: user + all their albums are on the same split boundary. Defined with INTERLEAVE IN PARENT at table creation. Critical for parent-child relationships with frequent join queries. Limits: max 6 levels of interleaving.',
+    tip: 'Spanner interleaving = co-located storage of parent + children. Reduces cross-server joins. Use for 1:N relationships that are always queried together (User → Orders → OrderItems).'
+  },
+  {
+    id: 108, cat: 'ml', diff: 'medium',
+    q: 'What are TPUs (Tensor Processing Units) on GCP and when should you use them?',
+    a: 'TPUs are Google\'s custom ASICs (Application-Specific Integrated Circuits) designed specifically for ML workloads — matrix multiplications that dominate deep learning training and inference. TPU types: TPU v4 (most powerful, available as Pod slices), TPU v5e (cost-optimized for inference and medium training), TPU v5p (highest training performance). When to use: training large neural networks (LLMs, transformers, ResNet, BERT) that have regular, dense matrix operations. Not ideal for: sparse models, custom ops not supported by XLA compiler, models with dynamic control flow. Access via: Vertex AI Training with Cloud TPU, or GCE with attached TPU. TPUs are used internally to train Gemini.',
+    tip: 'TPUs excel at training transformers/LLMs. If you\'re training a BERT or LLM on GCP, TPUs will be significantly faster and more cost-effective than GPUs for supported architectures.'
+  },
+  {
+    id: 109, cat: 'devops', diff: 'medium',
+    q: 'What is Config Sync (formerly ACM Config Sync) and how does it enable GitOps?',
+    a: 'Config Sync is a GKE and Anthos feature that continuously syncs Kubernetes configuration from a Git repository (or OCI registry) to one or many clusters. It uses a reconciler (based on FluxCD or ArgoCD-like operator) that watches the Git repo and applies/enforces the desired state. If someone manually modifies a resource on the cluster (configuration drift), Config Sync detects and reverts it. Supports: Helm charts, Kustomize overlays, raw YAML manifests. Works across multiple clusters simultaneously. Part of Anthos Config Management. Key feature: drift detection and correction — the cluster always matches Git.',
+    tip: 'Config Sync = GitOps enforcer. "Git is the source of truth" is enforced — any drift from Git state is automatically corrected. Essential for compliance and auditability.'
+  },
+  {
+    id: 110, cat: 'core', diff: 'advanced',
+    q: 'What is the Well-Architected Framework for GCP and what are its pillars?',
+    a: 'Google Cloud\'s Architecture Framework provides best practice guidance for designing and operating reliable, secure, efficient, and cost-effective systems. Five pillars: Operational Excellence (monitoring, incident management, CI/CD, SRE practices — SLOs, error budgets), Security and Privacy (defense-in-depth, least privilege, encryption, audit logging, Zero Trust), Reliability (fault tolerance, disaster recovery, chaos engineering, regional/multi-regional HA), Cost Optimization (rightsizing, committed use, FinOps, waste reduction), Performance and Scale (auto-scaling, global load balancing, caching, appropriate service selection). Each pillar has design principles and trade-off considerations. Based on Google SRE principles.',
+    tip: 'These 5 pillars map closely to AWS Well-Architected Framework (6 pillars) and Azure Well-Architected Framework. Knowing all cloud WAFs shows architectural maturity in interviews.'
+  },
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let filter     = 'all';
+let diffFilter = '';
+let catFilter  = 'all';
+let searchTerm = '';
+let done       = new Set(JSON.parse(localStorage.getItem('gcp_done') || '[]'));
+let starred    = new Set(JSON.parse(localStorage.getItem('gcp_star') || '[]'));
+
+// ═══════════════════════════════════════════════
+//  BUILD CATEGORY TABS
+// ═══════════════════════════════════════════════
+function buildCatTabs() {
+  const container = document.getElementById('catTabs');
+  const all = document.createElement('button');
+  all.className = 'cat-tab active';
+  all.textContent = '📋 All Topics';
+  all.dataset.cat = 'all';
+  all.onclick = () => setCat('all');
+  container.appendChild(all);
+
+  CATEGORIES.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-tab';
+    btn.textContent = c.label;
+    btn.dataset.cat = c.id;
+    btn.style.color = c.color;
+    btn.onclick = () => setCat(c.id);
+    container.appendChild(btn);
+  });
+}
+
+function setCat(cat) {
+  catFilter = cat;
+  document.querySelectorAll('.cat-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+    if (b.dataset.cat === cat) b.style.background = getCatColor(cat) + '22';
+    else b.style.background = '';
+  });
+  renderGrid();
+}
+
+function getCatColor(catId) {
+  const c = CATEGORIES.find(x => x.id === catId);
+  return c ? c.color : '#2979FF';
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════
+function getFiltered() {
+  return QUESTIONS.filter(q => {
+    if (catFilter !== 'all' && q.cat !== catFilter) return false;
+    if (diffFilter && q.diff !== diffFilter) return false;
+    if (filter === 'starred' && !starred.has(q.id)) return false;
+    if (filter === 'undone' && done.has(q.id)) return false;
+    if (searchTerm) {
+      const hay = (q.q + ' ' + q.a).toLowerCase();
+      if (!hay.includes(searchTerm.toLowerCase())) return false;
+    }
+    return true;
+  });
+}
+
+function renderGrid() {
+  const grid = document.getElementById('qGrid');
+  const filtered = getFiltered();
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">🔍 No questions match your filters. Try broadening your search.</div>';
+    return;
+  }
+
+  filtered.forEach(q => {
+    const cat = CATEGORIES.find(c => c.id === q.cat);
+    const isDone = done.has(q.id);
+    const isStar = starred.has(q.id);
+
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + q.id;
+
+    const diffLabel = { basic: 'Basic', medium: 'Medium', advanced: 'Advanced' }[q.diff];
+
+    card.innerHTML = `
+      <div class="q-card-accent" style="background: linear-gradient(90deg, ${cat.color}, ${cat.color}88)"></div>
+      <div class="q-card-body">
+        <div class="q-meta">
+          <span class="q-number">Q${String(q.id).padStart(3,'0')}</span>
+          <span class="q-cat-tag" style="background:${cat.color}22; color:${cat.color}">${cat.label}</span>
+          <span class="q-diff diff-${q.diff}">${diffLabel}</span>
+        </div>
+        <div class="q-question">${q.q}</div>
+        <button class="reveal-btn" id="rbtn-${q.id}" onclick="toggleAnswer(${q.id})">
+          <span>💡 Reveal Answer</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="answer-box" id="ans-${q.id}">
+          ${q.a}
+          ${q.tip ? `<div class="tip"><strong>💡 Interview Tip:</strong> ${q.tip}</div>` : ''}
+        </div>
+        <div class="card-actions">
+          <button class="done-btn ${isDone ? 'marked' : ''}" id="done-${q.id}" onclick="toggleDone(${q.id})">
+            ${isDone ? '✅ Completed' : '☐ Mark Complete'}
+          </button>
+          <button class="star-btn ${isStar ? 'starred' : ''}" id="star-${q.id}" onclick="toggleStar(${q.id})">
+            ${isStar ? '⭐' : '☆'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════
+//  INTERACTIONS
+// ═══════════════════════════════════════════════
+function toggleAnswer(id) {
+  const btn = document.getElementById('rbtn-' + id);
+  const ans = document.getElementById('ans-' + id);
+  const isOpen = ans.classList.contains('visible');
+  ans.classList.toggle('visible', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.querySelector('span').textContent = isOpen ? '💡 Reveal Answer' : '🙈 Hide Answer';
+}
+
+function toggleDone(id) {
+  if (done.has(id)) done.delete(id);
+  else done.add(id);
+  localStorage.setItem('gcp_done', JSON.stringify([...done]));
+  const btn = document.getElementById('done-' + id);
+  if (btn) {
+    btn.classList.toggle('marked', done.has(id));
+    btn.textContent = done.has(id) ? '✅ Completed' : '☐ Mark Complete';
+  }
+  updateStats();
+}
+
+function toggleStar(id) {
+  if (starred.has(id)) starred.delete(id);
+  else starred.add(id);
+  localStorage.setItem('gcp_star', JSON.stringify([...starred]));
+  const btn = document.getElementById('star-' + id);
+  if (btn) {
+    btn.classList.toggle('starred', starred.has(id));
+    btn.textContent = starred.has(id) ? '⭐' : '☆';
+  }
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('doneCount').textContent = done.size;
+  document.getElementById('starredCount').textContent = starred.size;
+  const pct = Math.round((done.size / QUESTIONS.length) * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function setFilter(f) {
+  filter = f;
+  diffFilter = '';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderGrid();
+}
+
+function setDiff(d) {
+  if (diffFilter === d) {
+    diffFilter = '';
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('filterAll').classList.add('active');
+  } else {
+    diffFilter = d;
+    filter = 'all';
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+  renderGrid();
+}
+
+// ═══════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchTerm = e.target.value;
+    renderGrid();
+  }, 200);
+});
+
+// ═══════════════════════════════════════════════
+//  SCROLL TO TOP
+// ═══════════════════════════════════════════════
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+buildCatTabs();
+renderGrid();
+document.getElementById('totalQ').textContent = QUESTIONS.length;
+document.getElementById('topicCount').textContent = CATEGORIES.length;
+</script>
+</body>
+</html>
